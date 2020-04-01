@@ -311,19 +311,19 @@ const render = (container, template, place = `beforeend`) => {
   container.insertAdjacentHTML(place, template);
 };
 
-const tripMainElement = document.querySelector('.trip-main');
-render(tripMainElement, createTripInfoTemplate(), `afterbegin`)
+const tripMainElement = document.querySelector(`.trip-main`);
+render(tripMainElement, createTripInfoTemplate(), `afterbegin`);
 
-const tripInfoElement = document.querySelector('.trip-info');
+const tripInfoElement = document.querySelector(`.trip-info`);
 render(tripInfoElement, createCostInfoTemplate());
 
-const tripControlsElement = tripMainElement.querySelector('.trip-controls')
-const menuHeaderElement = tripControlsElement.querySelector('h2');
+const tripControlsElement = tripMainElement.querySelector(`.trip-controls`);
+const menuHeaderElement = tripControlsElement.querySelector(`h2`);
 render(menuHeaderElement, createMenuTemplate(), `afterend`);
 
 render(tripControlsElement, createFilterTemplate());
 
-const tripEventsSection = document.querySelector('.trip-events');
+const tripEventsSection = document.querySelector(`.trip-events`);
 render(tripEventsSection, createSortTemplate());
 
 render(tripEventsSection, createTripEditTemplate());
@@ -331,8 +331,8 @@ render(tripEventsSection, createTripEditTemplate());
 render(tripEventsSection, createTripDaysSection());
 render(tripEventsSection, createDayTemplate());
 
-const tripEventsList = tripEventsSection.querySelector('.trip-events__list');
+const tripEventsList = tripEventsSection.querySelector(`.trip-events__list`);
 
 for (let i = 0; i < 3; i++) {
   render(tripEventsList, createTripEventTemplate());
-};
+}
