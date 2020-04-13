@@ -7,6 +7,10 @@ import {createSortTemplate} from './components/sort.js';
 import {createTripDaysSectionTemplate} from './components/trip-days-section.js';
 import {createTripEditTemplate} from './components/trip-edit.js';
 import {createTripInfoTemplate} from './components/trip-info.js';
+import {createEvents} from './mock/trip-event.js';
+
+
+const EVENTS_COUNT = 3;
 
 const render = (container, template, place = `beforeend`) => {
   container.insertAdjacentHTML(place, template);
@@ -27,13 +31,16 @@ render(tripControlsElement, createFilterTemplate());
 const tripEventsSection = document.querySelector(`.trip-events`);
 render(tripEventsSection, createSortTemplate());
 
-render(tripEventsSection, createTripEditTemplate());
+const events = createEvents(EVENTS_COUNT);
+
+render(tripEventsSection, createTripEditTemplate(events[0]));
 
 render(tripEventsSection, createTripDaysSectionTemplate());
 render(tripEventsSection, createDayTemplate());
 
 const tripEventsList = tripEventsSection.querySelector(`.trip-events__list`);
 
-for (let i = 0; i < 3; i++) {
-  render(tripEventsList, createTripEventTemplate());
+
+for (let i = 0; i < events.length; i++) {
+  render(tripEventsList, createTripEventTemplate(events[i]));
 }

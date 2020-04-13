@@ -1,4 +1,6 @@
 export const createDayTemplate = () => {
+  // const {startDate, endDate} = event;
+
   return (
     `<li class="trip-days__item  day">
       <div class="day__info">
