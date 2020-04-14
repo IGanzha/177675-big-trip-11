@@ -11,7 +11,7 @@ const getTwoNumbersFormat = (number) => {
 
 const castDateFormat = (date) => {
   return (
-    `${date.getFullYear()}-${getTwoNumbersFormat(date.getMonth())}-${getTwoNumbersFormat(date.getDate())}T${getTwoNumbersFormat(date.getHours())}:${getTwoNumbersFormat(date.getMinutes())}`
+    `${date.getFullYear()}-${getTwoNumbersFormat(date.getMonth())}-${getTwoNumbersFormat(date.getDate())}`
   );
 };
 
@@ -42,9 +42,9 @@ const createTimeMarkup = (start, end) => {
 
   return (
     `<p class="event__time">
-      <time class="event__start-time" datetime="${startDateFormat}">${startTimeFormat}</time>
+      <time class="event__start-time" datetime="${startDateFormat}T${startTimeFormat}">${startTimeFormat}</time>
       &mdash;
-      <time class="event__end-time" datetime="${endDateFormat}">${endTimeFormat}</time>
+      <time class="event__end-time" datetime="${endDateFormat}T${endTimeFormat}">${endTimeFormat}</time>
     </p>
     <p class="event__duration">${eventDuration}</p>
     `
@@ -65,10 +65,11 @@ const createChosenOffersMarkup = (chosenOffersArray, amount = `${chosenOffersArr
 };
 
 export const createTripEventTemplate = (event) => {
+
   const {type, city, availableOffers, price, preposition, startDate, endDate} = event;
 
+
   const chosenOffers = getRandomArray(availableOffers);
-  // const chosenOffersMarkup = createChosenOffersMarkup(chosenOffers);
   const shortChosenOffersMarkup = createChosenOffersMarkup(chosenOffers, CHOSEN_OFFERS_TO_PREVIEW);
   const timeMarkup = createTimeMarkup(startDate, endDate);
   return (

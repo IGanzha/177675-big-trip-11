@@ -1,3 +1,5 @@
+import {castDateFormat} from '../utils.js';
+
 const getRandomArrayItem = (array) => {
   const randomIndex = getRandomIntegerNumber(0, array.length);
   return array[randomIndex];
@@ -25,7 +27,6 @@ const getRandomStartDate = () => {
 
 const getRandomEndDate = (startDate) => {
   const targetDate = new Date();
-  // startDate;
   const diffDaysValue = getRandomIntegerNumber(0, 3);
   const diffHoursValue = getRandomIntegerNumber(0, 23);
   const diffMinutesValue = getRandomIntegerNumber(0, 59);
@@ -107,10 +108,10 @@ const photos = [
   `<img src='http://picsum.photos/248/152?r=${Math.random()}'>`,
 ];
 
-
 const createEvent = function () {
   const type = getRandomArrayItem(eventTypes);
   const startDate = getRandomStartDate();
+
   return {
     type,
     city: getRandomArrayItem(cities),
@@ -121,15 +122,23 @@ const createEvent = function () {
     preposition: activityTypes.includes(type) ? `in` : `to`,
     startDate,
     endDate: getRandomEndDate(startDate),
-
+    dateForGroup: castDateFormat(startDate),
   };
 };
 
 const createEvents = (count) => {
   return new Array(count)
     .fill(``)
-    .map(createEvent);
+    .map(createEvent)
+    .sort((first, second) => {
+      if (first.startDate > second.startDate) {
+        return 1;
+      } else if (first.startDate < second.startDate) {
+        return -1;
+      } else {
+        return 0;
+      }
+    });
 };
 
 export {createEvent, createEvents};
-

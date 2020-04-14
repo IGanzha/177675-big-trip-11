@@ -1,4 +1,3 @@
-import {createTripEventTemplate} from './components/trip-event.js';
 import {createDayTemplate} from './components/day.js';
 import {createCostInfoTemplate} from './components/cost-info.js';
 import {createFilterTemplate} from './components/filter.js';
@@ -8,9 +7,10 @@ import {createTripDaysSectionTemplate} from './components/trip-days-section.js';
 import {createTripEditTemplate} from './components/trip-edit.js';
 import {createTripInfoTemplate} from './components/trip-info.js';
 import {createEvents} from './mock/trip-event.js';
+import {getGroupedEvents} from './utils.js';
 
 
-const EVENTS_COUNT = 3;
+const EVENTS_COUNT = 10;
 
 const render = (container, template, place = `beforeend`) => {
   container.insertAdjacentHTML(place, template);
@@ -33,14 +33,14 @@ render(tripEventsSection, createSortTemplate());
 
 const events = createEvents(EVENTS_COUNT);
 
+const groupByDayEvents = getGroupedEvents(events, `dateForGroup`);
+
 render(tripEventsSection, createTripEditTemplate(events[0]));
-
 render(tripEventsSection, createTripDaysSectionTemplate());
-render(tripEventsSection, createDayTemplate());
 
-const tripEventsList = tripEventsSection.querySelector(`.trip-events__list`);
+let dayNumber = 0;
 
-
-for (let i = 0; i < events.length; i++) {
-  render(tripEventsList, createTripEventTemplate(events[i]));
+for (const day of Object.keys(groupByDayEvents)) {
+  dayNumber++;
+  render(tripEventsSection, createDayTemplate(day, groupByDayEvents[day], dayNumber));
 }
