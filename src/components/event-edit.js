@@ -1,4 +1,5 @@
-import {createElement, castDateFormatForEdit, castTimeFormat} from "../utils.js";
+import {castDateFormatForEdit, castTimeFormat} from "../utils/common.js";
+import AbstractComponent from "./abstract-component.js";
 
 const createOffersMarkup = (offers) => {
 
@@ -122,25 +123,17 @@ const createEventEditTemplate = (event) => {
   );
 };
 
-export default class EventEdit {
+export default class EventEdit extends AbstractComponent {
   constructor(event) {
+    super();
     this._event = event;
-    this._element = null;
   }
 
   getTemplate() {
     return createEventEditTemplate(this._event);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
+  setSubmitHandler(handler) {
+    this.getElement().addEventListener(`submit`, handler);
   }
 }
