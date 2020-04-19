@@ -1,6 +1,6 @@
-import {createTripEventTemplate} from './trip-event.js';
+import {createElement} from "../utils.js";
 
-const numberToMonth = {
+const NumberToMonth = {
   1: `JAN`,
   2: `FEB`,
   3: `MAR`,
@@ -17,18 +17,13 @@ const numberToMonth = {
 
 const castMonthFormat = (dateString) => {
   const monthNumber = +(dateString[5] + dateString[6]);
-  return numberToMonth[monthNumber];
+  return NumberToMonth[monthNumber];
 };
 
-export const createDayTemplate = (date, arr, dayIndex) => {
-
-  const createEventsMarkup = (eventsList) => {
-    return eventsList.map(createTripEventTemplate).join(``);
-  };
+const createDayTemplate = (date, dayIndex) => {
 
   const month = castMonthFormat(date);
   const day = date[8] + date[9];
-  const eventsMarkup = createEventsMarkup(arr);
 
   return (
     `<li class="trip-days__item  day">
@@ -38,9 +33,31 @@ export const createDayTemplate = (date, arr, dayIndex) => {
       </div>
 
       <ul class="trip-events__list">
-        ${eventsMarkup}
       </ul>
     </li>`
   );
 };
 
+export default class Day {
+  constructor(date, dayIndex) {
+    this._date = date;
+    this._dayIndex = dayIndex;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createDayTemplate(this._date, this._dayIndex);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

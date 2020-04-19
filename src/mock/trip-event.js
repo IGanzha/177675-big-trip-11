@@ -1,6 +1,6 @@
 import {castDateFormat} from '../utils.js';
 
-const getRandomArrayItem = (array) => {
+export const getRandomArrayItem = (array) => {
   const randomIndex = getRandomIntegerNumber(0, array.length);
   return array[randomIndex];
 };
@@ -37,9 +37,9 @@ const getRandomEndDate = (startDate) => {
   return targetDate;
 };
 
-const roadTypes = [`Taxi`, `Bus`, `Train`, `Ship`, `Transport`, `Drive`, `Flight`];
+const transferTypes = [`Taxi`, `Bus`, `Train`, `Ship`, `Transport`, `Drive`, `Flight`];
 const activityTypes = [`Check-in`, `Sightseeing`, `Restaurant`];
-const eventTypes = [].concat(roadTypes, activityTypes);
+const eventTypes = [].concat(transferTypes, activityTypes);
 
 
 const MIN_EVENT_PRICE = 10;
@@ -111,10 +111,13 @@ const photos = [
 const createEvent = function () {
   const type = getRandomArrayItem(eventTypes);
   const startDate = getRandomStartDate();
-
+  const city = getRandomArrayItem(cities);
   return {
     type,
-    city: getRandomArrayItem(cities),
+    activityTypes,
+    transferTypes,
+    city,
+    cities,
     description: getRandomArray(descriptions),
     photos: getRandomArray(photos),
     availableOffers: offersForTypes[type],
@@ -122,7 +125,7 @@ const createEvent = function () {
     preposition: activityTypes.includes(type) ? `in` : `to`,
     startDate,
     endDate: getRandomEndDate(startDate),
-    dateForGroup: castDateFormat(startDate),
+    dateForGroup: castDateFormat(startDate, `-`),
   };
 };
 

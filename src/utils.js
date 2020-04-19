@@ -1,20 +1,33 @@
-const getTwoNumbersFormat = (number) => {
+export const RenderPosition = {
+  AFTERBEGIN: `afterbegin`,
+  BEFOREEND: `beforeend`,
+  AFTER: `after`,
+  BEFORE: `before`
+};
+
+export const getTwoNumbersFormat = (number) => {
   return String(number).padStart(2, `0`);
 };
 
-const castDateFormat = (date) => {
+export const castDateFormat = (date, connector) => {
   return (
-    `${date.getFullYear()}-${getTwoNumbersFormat(date.getMonth())}-${getTwoNumbersFormat(date.getDate())}`
+    `${date.getFullYear()}${connector}${getTwoNumbersFormat(date.getMonth() + 1)}${connector}${getTwoNumbersFormat(date.getDate())}`
   );
 };
 
-const castTimeFormat = (date) => {
+export const castDateFormatForEdit = (date, connector) => {
+  return (
+    `${getTwoNumbersFormat(date.getDate())}${connector}${getTwoNumbersFormat(date.getMonth() + 1)}${connector}${date.getFullYear()}`
+  );
+};
+
+export const castTimeFormat = (date) => {
   return (
     `${getTwoNumbersFormat(date.getHours())}:${getTwoNumbersFormat(date.getMinutes())}`
   );
 };
 
-const getGroupedEvents = (arr, dateField) => {
+export const getGroupedEvents = (arr, dateField) => {
   const result = {};
 
   arr.forEach((event) => {
@@ -27,4 +40,26 @@ const getGroupedEvents = (arr, dateField) => {
   return result;
 };
 
-export {castDateFormat, castTimeFormat, getTwoNumbersFormat, getGroupedEvents};
+export const createElement = (template) => {
+  const newElement = document.createElement(`div`);
+  newElement.innerHTML = template;
+
+  return newElement.firstChild;
+};
+
+export const render = (container, element, place) => {
+  switch (place) {
+    case RenderPosition.AFTERBEGIN:
+      container.prepend(element);
+      break;
+    case RenderPosition.BEFOREEND:
+      container.append(element);
+      break;
+    case RenderPosition.AFTER:
+      container.after(element);
+      break;
+    case RenderPosition.BEFORE:
+      container.before(element);
+      break;
+  }
+};

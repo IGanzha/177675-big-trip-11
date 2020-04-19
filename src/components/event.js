@@ -1,32 +1,17 @@
 import {getRandomArray} from '../mock/trip-event.js';
+import {getTwoNumbersFormat, castDateFormat, castTimeFormat, createElement} from '../utils.js';
 
 const CHOSEN_OFFERS_TO_PREVIEW = 3;
 const MILISEC_IN_DAY = 1000 * 60 * 60 * 24;
 const MILISEC_IN_HOUR = 1000 * 60 * 60;
 const MILISEC_IN_MINUTE = 1000 * 60;
 
-const getTwoNumbersFormat = (number) => {
-  return String(number).padStart(2, `0`);
-};
-
-const castDateFormat = (date) => {
-  return (
-    `${date.getFullYear()}-${getTwoNumbersFormat(date.getMonth())}-${getTwoNumbersFormat(date.getDate())}`
-  );
-};
-
-const castTimeFormt = (date) => {
-  return (
-    `${getTwoNumbersFormat(date.getHours())}:${getTwoNumbersFormat(date.getMinutes())}`
-  );
-};
-
 const createTimeMarkup = (start, end) => {
 
-  const startDateFormat = castDateFormat(start);
-  const startTimeFormat = castTimeFormt(start);
-  const endDateFormat = castDateFormat(end);
-  const endTimeFormat = castTimeFormt(end);
+  const startDay = castDateFormat(start, `-`);
+  const startTime = castTimeFormat(start);
+  const endDay = castDateFormat(end, `-`);
+  const endTime = castTimeFormat(end);
 
   const duration = end - start;
 
@@ -34,17 +19,13 @@ const createTimeMarkup = (start, end) => {
   const durationHours = getTwoNumbersFormat(Math.floor((duration % MILISEC_IN_DAY) / MILISEC_IN_HOUR));
   const durationMinutes = getTwoNumbersFormat(Math.floor(((duration % MILISEC_IN_DAY) % MILISEC_IN_HOUR) / MILISEC_IN_MINUTE));
 
-  const eventDaysDuration = (durationDays >= 1) ? `${durationDays}D` : ``;
-  const eventHoursDuration = (durationDays >= 1 || durationHours >= 1) ? `${durationHours}H` : ``;
-  const eventMinutesDuration = `${durationMinutes}M`;
-
-  const eventDuration = `${eventDaysDuration} ${eventHoursDuration} ${eventMinutesDuration}`;
+  const eventDuration = `${(durationDays >= 1) ? `${durationDays}D` : ``} ${(durationDays >= 1 || durationHours >= 1) ? `${durationHours}H` : ``} ${durationMinutes}M`;
 
   return (
     `<p class="event__time">
-      <time class="event__start-time" datetime="${startDateFormat}T${startTimeFormat}">${startTimeFormat}</time>
+      <time class="event__start-time" datetime="${startDay}T${startTime}">${startTime}</time>
       &mdash;
-      <time class="event__end-time" datetime="${endDateFormat}T${endTimeFormat}">${endTimeFormat}</time>
+      <time class="event__end-time" datetime="${endDay}T${endTime}">${endTime}</time>
     </p>
     <p class="event__duration">${eventDuration}</p>
     `
@@ -64,7 +45,7 @@ const createChosenOffersMarkup = (chosenOffersArray, amount = `${chosenOffersArr
   }).join(`\n`);
 };
 
-export const createTripEventTemplate = (event) => {
+const createEventTemplate = (event) => {
 
   const {type, city, availableOffers, price, preposition, startDate, endDate} = event;
 
@@ -100,3 +81,26 @@ export const createTripEventTemplate = (event) => {
     </li>`
   );
 };
+
+export default class Event {
+  constructor(event) {
+    this._event = event;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createEventTemplate(this._event);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
