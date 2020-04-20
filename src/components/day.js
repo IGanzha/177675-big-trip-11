@@ -1,4 +1,4 @@
-import {createElement} from "../utils.js";
+import AbstractComponent from "./abstract-component.js";
 
 const NumberToMonth = {
   1: `JAN`,
@@ -38,26 +38,14 @@ const createDayTemplate = (date, dayIndex) => {
   );
 };
 
-export default class Day {
+export default class Day extends AbstractComponent {
   constructor(date, dayIndex) {
+    super();
     this._date = date;
     this._dayIndex = dayIndex;
-    this._element = null;
   }
 
   getTemplate() {
     return createDayTemplate(this._date, this._dayIndex);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

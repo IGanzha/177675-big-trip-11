@@ -1,4 +1,4 @@
-import {castDateFormat} from '../utils.js';
+import {castDateFormat} from '../utils/common.js';
 
 export const getRandomArrayItem = (array) => {
   const randomIndex = getRandomIntegerNumber(0, array.length);

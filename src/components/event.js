@@ -1,5 +1,6 @@
 import {getRandomArray} from '../mock/trip-event.js';
-import {getTwoNumbersFormat, castDateFormat, castTimeFormat, createElement} from '../utils.js';
+import {getTwoNumbersFormat, castDateFormat, castTimeFormat} from '../utils/common.js';
+import AbstractComponent from "./abstract-component.js";
 
 const CHOSEN_OFFERS_TO_PREVIEW = 3;
 const MILISEC_IN_DAY = 1000 * 60 * 60 * 24;
@@ -82,25 +83,18 @@ const createEventTemplate = (event) => {
   );
 };
 
-export default class Event {
+export default class Event extends AbstractComponent {
   constructor(event) {
+    super();
     this._event = event;
-    this._element = null;
   }
 
   getTemplate() {
     return createEventTemplate(this._event);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
+  setEditButtonClickHandler(handler) {
+    this.getElement().querySelector(`.event__rollup-btn`)
+      .addEventListener(`click`, handler);
   }
 }
