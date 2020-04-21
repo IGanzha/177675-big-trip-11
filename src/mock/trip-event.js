@@ -111,7 +111,9 @@ const photos = [
 const createEvent = function () {
   const type = getRandomArrayItem(eventTypes);
   const startDate = getRandomStartDate();
+  const endDate = getRandomEndDate(startDate);
   const city = getRandomArrayItem(cities);
+  const duration = endDate - startDate;
   return {
     type,
     activityTypes,
@@ -124,7 +126,8 @@ const createEvent = function () {
     price: getRandomIntegerNumber(MIN_EVENT_PRICE, MAX_EVENT_PRICE),
     preposition: activityTypes.includes(type) ? `in` : `to`,
     startDate,
-    endDate: getRandomEndDate(startDate),
+    endDate,
+    duration,
     dateForGroup: castDateFormat(startDate, `-`),
   };
 };
@@ -132,16 +135,7 @@ const createEvent = function () {
 const createEvents = (count) => {
   return new Array(count)
     .fill(``)
-    .map(createEvent)
-    .sort((first, second) => {
-      if (first.startDate > second.startDate) {
-        return 1;
-      } else if (first.startDate < second.startDate) {
-        return -1;
-      } else {
-        return 0;
-      }
-    });
+    .map(createEvent);
 };
 
 export {createEvent, createEvents};
