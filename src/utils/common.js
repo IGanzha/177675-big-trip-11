@@ -20,15 +20,18 @@ export const castTimeFormat = (date) => {
   );
 };
 
-export const getGroupedEvents = (arr, dateField) => {
+export const getGroupedEvents = (arr, field, sortType) => {
   const result = {};
+  if (sortType === `events-up`) {
+    arr.forEach((event) => {
+      if (result[event[field]] === undefined) {
+        result[event[field]] = [];
+      }
+      result[event[field]].push(event);
+    });
+  } else {
+    result[`noGroup`] = arr;
+  }
 
-  arr.forEach((event) => {
-    if (result[event[dateField]] === undefined) {
-      result[event[dateField]] = [];
-    }
-
-    result[event[dateField]].push(event);
-  });
   return result;
 };

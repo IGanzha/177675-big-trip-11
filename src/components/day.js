@@ -21,15 +21,18 @@ const castMonthFormat = (dateString) => {
 };
 
 const createDayTemplate = (date, dayIndex) => {
-
   const month = castMonthFormat(date);
   const day = date[8] + date[9];
+
+  const dayInfoMarkup = (date === `noGroup`) ? `` : (
+    `<span class="day__counter">${dayIndex}</span>
+    <time class="day__date" datetime="${date}">${month} ${day}</time>`
+  );
 
   return (
     `<li class="trip-days__item  day">
       <div class="day__info">
-        <span class="day__counter">${dayIndex}</span>
-        <time class="day__date" datetime="${date}">${month} ${day}</time>
+        ${dayInfoMarkup}
       </div>
 
       <ul class="trip-events__list">
