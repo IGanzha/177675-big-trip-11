@@ -129,6 +129,7 @@ const createEvent = function () {
     endDate,
     duration,
     dateForGroup: castDateFormat(startDate, `-`),
+    isFavorite: Math.random() > 0.5,
   };
 };
 
