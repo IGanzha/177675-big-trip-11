@@ -1,5 +1,5 @@
 import {castDateFormatForEdit, castTimeFormat} from "../utils/common.js";
-import AbstractComponent from "./abstract-component.js";
+import AbstractSmartComponent from "./abstract-smart-component.js";
 
 const createOffersMarkup = (offers) => {
 
@@ -38,6 +38,7 @@ const createTypesMarkup = (types) => {
 
 
 const createEventEditTemplate = (event) => {
+  console.log(`type, city, isFav: `, event.type, event.city, event.isFavorite, );
   const {type, city, cities, availableOffers, preposition, activityTypes, transferTypes, startDate, endDate, price} = event;
 
   const offersMarkup = createOffersMarkup(availableOffers, type);
@@ -137,10 +138,15 @@ const createEventEditTemplate = (event) => {
   );
 };
 
-export default class EventEdit extends AbstractComponent {
+export default class EventEdit extends AbstractSmartComponent {
   constructor(event) {
     super();
     this._event = event;
+    this._submitHandler = null;
+  }
+
+  rerender() {
+    super.rerender();
   }
 
   getTemplate() {
@@ -149,6 +155,7 @@ export default class EventEdit extends AbstractComponent {
 
   setSubmitHandler(handler) {
     this.getElement().addEventListener(`submit`, handler);
+    this._submitHandler = handler;
   }
 
   setFavoritesButtonClickHandler(handler) {
@@ -156,4 +163,11 @@ export default class EventEdit extends AbstractComponent {
       .addEventListener(`click`, handler);
   }
 
+  recoveryListeners() {
+
+  }
+
+  _subscribeOnEvents() {
+
+  }
 }

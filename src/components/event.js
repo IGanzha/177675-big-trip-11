@@ -1,6 +1,6 @@
 import {getRandomArray} from '../mock/trip-event.js';
 import {getTwoNumbersFormat, castDateFormat, castTimeFormat} from '../utils/common.js';
-import AbstractComponent from "./abstract-component.js";
+import AbstractSmartComponent from "./abstract-smart-component.js";
 
 const CHOSEN_OFFERS_TO_PREVIEW = 3;
 const MILISEC_IN_DAY = 1000 * 60 * 60 * 24;
@@ -83,7 +83,7 @@ const createEventTemplate = (event) => {
   );
 };
 
-export default class Event extends AbstractComponent {
+export default class Event extends AbstractSmartComponent {
   constructor(event) {
     super();
     this._event = event;

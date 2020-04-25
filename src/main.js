@@ -10,7 +10,7 @@ import {render, RenderPosition} from './utils/render.js';
 import {filterNames} from './mock/filter.js';
 import {createEvents} from './mock/trip-event.js';
 
-const EVENTS_COUNT = 10;
+const EVENTS_COUNT = 3;
 const events = createEvents(EVENTS_COUNT);
 
 
