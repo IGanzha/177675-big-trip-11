@@ -32,13 +32,13 @@ export default class PointController {
 
 
 
-    this._eventEditComponent.setFavoritesButtonClickHandler((evt) => {
-      // console.log();
-      // console.log(this);
-      // this._onDataChange(point, {
-      //   isFavorite: !point.isFavorite,
-      // });
-    });
+    // this._eventEditComponent.setFavoritesButtonClickHandler((evt) => {
+    //   // console.log();
+    //   // console.log(this);
+    //   // this._onDataChange(point, {
+    //   //   isFavorite: !point.isFavorite,
+    //   // });
+    // });
 
     render(this._container, this._eventComponent, RenderPosition.BEFOREEND);
   }

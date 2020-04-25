@@ -48,12 +48,14 @@ const createChosenOffersMarkup = (chosenOffersArray, amount = `${chosenOffersArr
 
 const createEventTemplate = (event) => {
 
-  const {type, city, availableOffers, price, preposition, startDate, endDate} = event;
+  const {type, city, availableOffers, activityTypes, price, startDate, endDate} = event;
 
 
   const chosenOffers = getRandomArray(availableOffers);
   const shortChosenOffersMarkup = createChosenOffersMarkup(chosenOffers, CHOSEN_OFFERS_TO_PREVIEW);
   const timeMarkup = createTimeMarkup(startDate, endDate);
+  const preposition = activityTypes.includes(type) ? `in` : `to`;
+
   return (
     `<li class="trip-events__item">
       <div class="event">

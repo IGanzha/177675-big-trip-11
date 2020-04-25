@@ -39,7 +39,7 @@ const createTypesMarkup = (types) => {
 
 const createEventEditTemplate = (event) => {
   console.log(`type, city, isFav: `, event.type, event.city, event.isFavorite, );
-  const {type, city, cities, availableOffers, preposition, activityTypes, transferTypes, startDate, endDate, price} = event;
+  const {type, city, cities, availableOffers, activityTypes, transferTypes, startDate, endDate, price} = event;
 
   const offersMarkup = createOffersMarkup(availableOffers, type);
 
@@ -55,6 +55,7 @@ const createEventEditTemplate = (event) => {
   const endTime = castTimeFormat(endDate);
 
   const isEventFavorite = (event.isFavorite) ? `checked` : ``;
+  const preposition = activityTypes.includes(type) ? `in` : `to`;
 
   return (
     `<form class="trip-events__item  event  event--edit" action="#" method="post">
@@ -158,10 +159,10 @@ export default class EventEdit extends AbstractSmartComponent {
     this._submitHandler = handler;
   }
 
-  setFavoritesButtonClickHandler(handler) {
-    this.getElement().querySelector(`.event__favorite-btn`)
-      .addEventListener(`click`, handler);
-  }
+  // setFavoritesButtonClickHandler(handler) {
+  //   this.getElement().querySelector(`.event__favorite-btn`)
+  //     .addEventListener(`click`, handler);
+  // }
 
   recoveryListeners() {
 
