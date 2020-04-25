@@ -12,16 +12,17 @@ const renderEvents = (eventListElement, points, sortType, onDataChange) => {
   const groupedByDayEvents = getGroupedEvents(points, `dateForGroup`, sortType);
 
   let dayNumber = 0;
+  let index = 1;
   for (const day of Object.keys(groupedByDayEvents)) {
     dayNumber++;
     const dayComponent = new DayComponent(day, dayNumber);
     render(eventListElement, dayComponent, RenderPosition.BEFOREEND);
     const dayPointsList = dayComponent.getElement().querySelector(`.trip-events__list`);
     const dayPoints = groupedByDayEvents[day];
-
     dayPoints.map((point) => {
       const pointController = new PointController(dayPointsList, onDataChange);
-      pointController.render(point);
+      pointController.render(point, index);
+      index++;
       return pointController;
     });
 
@@ -35,9 +36,10 @@ const getSortedEvents = (events, sortType) => {
     case SortType.TIME_DOWN:
 
       sortedEvents = events.slice().sort((first, second) => {
-        if (first.duration > second.duration) {
+        // if (first.duration > second.duration) {
+        if ((first.endDate - first.startDate) > (second.endDate - second.startDate)) {
           return -1;
-        } else if (first.duration < second.duration) {
+        } else if ((first.endDate - first.startDate) < (second.endDate - second.startDate)) {
           return 1;
         } else {
           return 0;
@@ -104,7 +106,6 @@ export default class TripController {
     const sortedEvents = getSortedEvents(this._events, this._sortComponent.getSortType());
 
     renderEvents(tripDaysList, sortedEvents, this._sortComponent.getSortType());
-        // renderEvents(tripDaysList, sortedEvents, this._sortComponent.getSortType(), this._onDataChange);
   }
 
   _onSortTypeChange(sortType) {
@@ -120,8 +121,6 @@ export default class TripController {
   //     return;
   //   }
   //   return Object.assign(this._events[index], modificator);
-
-
 
   //   // this._events[index] = newData;
   //   // this._events = [].concat(this._events.slice(0, index), newData, this._events.slice(index + 1));

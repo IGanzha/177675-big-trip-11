@@ -37,8 +37,12 @@ const getRandomEndDate = (startDate) => {
   return targetDate;
 };
 
+const getTrueOrFalse = () => {
+  return Math.random() > 0.5;
+};
+
 const transferTypes = [`Taxi`, `Bus`, `Train`, `Ship`, `Transport`, `Drive`, `Flight`];
-const activityTypes = [`Check-in`, `Sightseeing`, `Restaurant`];
+export const activityTypes = [`Check-in`, `Sightseeing`, `Restaurant`];
 const eventTypes = [].concat(transferTypes, activityTypes);
 
 
@@ -71,22 +75,27 @@ const allOffers = [
     id: `luggage`,
     text: `Add luggage`,
     price: 30,
+    checked: getTrueOrFalse(),
   }, {
     id: `comfort`,
     text: `Switch to comfort class`,
     price: 100,
+    checked: getTrueOrFalse(),
   }, {
     id: `meal`,
     text: `Add meal`,
     price: 15,
+    checked: getTrueOrFalse(),
   }, {
     id: `seats`,
     text: `Choose seats`,
     price: 5,
+    checked: getTrueOrFalse(),
   }, {
     id: `train`,
     text: `Travel by train`,
     price: 40,
+    checked: getTrueOrFalse(),
   }
 ];
 
@@ -113,7 +122,6 @@ const createEvent = function () {
   const startDate = getRandomStartDate();
   const endDate = getRandomEndDate(startDate);
   const city = getRandomArrayItem(cities);
-  const duration = endDate - startDate;
   return {
     type,
     activityTypes,
@@ -124,12 +132,10 @@ const createEvent = function () {
     photos: getRandomArray(photos),
     availableOffers: offersForTypes[type],
     price: getRandomIntegerNumber(MIN_EVENT_PRICE, MAX_EVENT_PRICE),
-    preposition: activityTypes.includes(type) ? `in` : `to`,
     startDate,
     endDate,
-    duration,
     dateForGroup: castDateFormat(startDate, `-`),
-    isFavorite: Math.random() > 0.5,
+    isFavorite: getTrueOrFalse(),
   };
 };
 

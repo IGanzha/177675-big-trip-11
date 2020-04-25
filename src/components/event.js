@@ -1,4 +1,3 @@
-import {getRandomArray} from '../mock/trip-event.js';
 import {getTwoNumbersFormat, castDateFormat, castTimeFormat} from '../utils/common.js';
 import AbstractSmartComponent from "./abstract-smart-component.js";
 
@@ -33,9 +32,18 @@ const createTimeMarkup = (start, end) => {
   );
 };
 
-const createChosenOffersMarkup = (chosenOffersArray, amount = `${chosenOffersArray.length}`) => {
+const createChosenOffersMarkup = (offersArray, offersAmount = `${offersArray.length}`) => {
 
-  return (chosenOffersArray.length === 0) ? `` : chosenOffersArray.slice(0, amount).map((offer)=> {
+  if (!offersArray) {
+    return ``;
+  }
+
+  const chosenOffers = offersArray.filter((offer) => {
+
+    return offer.checked;
+  });
+
+  return (chosenOffers.length === 0) ? `` : chosenOffers.slice(0, offersAmount).map((offer)=> {
     return (
       `<li class="event__offer">
         <span class="event__offer-title">${offer.text}</span>
@@ -44,15 +52,15 @@ const createChosenOffersMarkup = (chosenOffersArray, amount = `${chosenOffersArr
       </li>`
     );
   }).join(`\n`);
+
 };
+
 
 const createEventTemplate = (event) => {
 
   const {type, city, availableOffers, activityTypes, price, startDate, endDate} = event;
 
-
-  const chosenOffers = getRandomArray(availableOffers);
-  const shortChosenOffersMarkup = createChosenOffersMarkup(chosenOffers, CHOSEN_OFFERS_TO_PREVIEW);
+  const shortListChosenOffersMarkup = createChosenOffersMarkup(availableOffers, CHOSEN_OFFERS_TO_PREVIEW);
   const timeMarkup = createTimeMarkup(startDate, endDate);
   const preposition = activityTypes.includes(type) ? `in` : `to`;
 
@@ -74,7 +82,7 @@ const createEventTemplate = (event) => {
 
         <h4 class="visually-hidden">Offers:</h4>
         <ul class="event__selected-offers">
-          ${shortChosenOffersMarkup}
+          ${shortListChosenOffersMarkup}
         </ul>
 
         <button class="event__rollup-btn" type="button">

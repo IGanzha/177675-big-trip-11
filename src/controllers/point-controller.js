@@ -7,6 +7,7 @@ export default class PointController {
   // constructor(container, onDataChange) {
   constructor(container) {
     this._container = container;
+    // this._index = index;
     // this._onDataChange = onDataChange;
 
     this._eventComponent = null;
@@ -15,10 +16,10 @@ export default class PointController {
     this._onEscKeyDown = this._onEscKeyDown.bind(this);
   }
 
-  render(point) {
+  render(point, index) {
 
     this._eventComponent = new EventComponent(point);
-    this._eventEditComponent = new EventEditComponent(point);
+    this._eventEditComponent = new EventEditComponent(point, index);
 
     this._eventComponent.setEditButtonClickHandler(() => {
       this._replaceEventToEdit();
@@ -26,18 +27,14 @@ export default class PointController {
     });
 
     this._eventEditComponent.setSubmitHandler(() => {
-      // evt.preventDefault();
       this._replaceEditToEvent();
     });
 
-
-
     // this._eventEditComponent.setFavoritesButtonClickHandler((evt) => {
-    //   // console.log();
-    //   // console.log(this);
-    //   // this._onDataChange(point, {
-    //   //   isFavorite: !point.isFavorite,
-    //   // });
+
+    //   this._onDataChange(point, {
+    //     isFavorite: !point.isFavorite,
+    //   });
     // });
 
     render(this._container, this._eventComponent, RenderPosition.BEFOREEND);
