@@ -111,11 +111,14 @@ const offersForTypes = {
   'Restaurant': getRandomArray(allOffers),
 };
 
-const photos = [
-  `<img src='http://picsum.photos/248/152?r=${Math.random()}'>`,
-  `<img src='http://picsum.photos/248/152?r=${Math.random()}'>`,
-  `<img src='http://picsum.photos/248/152?r=${Math.random()}'>`,
-];
+const getPhotosArray = () => {
+  const photosArr = [];
+
+  for (let i = 0; i < getRandomIntegerNumber(0, 5); i++) {
+    photosArr.push(`http://picsum.photos/248/152?r=${Math.random()}`);
+  }
+  return photosArr;
+};
 
 const createEvent = function () {
   const type = getRandomArrayItem(eventTypes);
@@ -128,8 +131,10 @@ const createEvent = function () {
     transferTypes,
     city,
     cities,
-    description: getRandomArray(descriptions),
-    photos: getRandomArray(photos),
+    destination: {
+      description: getRandomArrayItem(descriptions),
+      photos: getPhotosArray(),
+    },
     availableOffers: offersForTypes[type],
     price: getRandomIntegerNumber(MIN_EVENT_PRICE, MAX_EVENT_PRICE),
     startDate,

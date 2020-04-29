@@ -4,40 +4,49 @@ import {render, replace, RenderPosition} from '../utils/render.js';
 
 
 export default class PointController {
-  // constructor(container, onDataChange) {
-  constructor(container) {
+  constructor(container, index, onDataChange) {
     this._container = container;
-    // this._index = index;
-    // this._onDataChange = onDataChange;
-
+    this._onDataChange = onDataChange;
+    this._index = index;
     this._eventComponent = null;
     this._eventEditComponent = null;
 
     this._onEscKeyDown = this._onEscKeyDown.bind(this);
   }
 
-  render(point, index) {
+  render(point) {
+    const oldEventComponent = this._eventComponent;
+    const oldEventEditComponent = this._eventEditComponent;
 
     this._eventComponent = new EventComponent(point);
-    this._eventEditComponent = new EventEditComponent(point, index);
+    this._eventEditComponent = new EventEditComponent(point, this._index);
 
     this._eventComponent.setEditButtonClickHandler(() => {
       this._replaceEventToEdit();
       document.addEventListener(`keydown`, this._onEscKeyDown);
     });
 
-    this._eventEditComponent.setSubmitHandler(() => {
+    this._eventEditComponent.setSubmitHandler((evt) => {
+      evt.preventDefault();
       this._replaceEditToEvent();
     });
 
-    // this._eventEditComponent.setFavoritesButtonClickHandler((evt) => {
+    this._eventEditComponent.setFavoritesButtonClickHandler((evt) => {
+      evt.preventDefault();
 
-    //   this._onDataChange(point, {
-    //     isFavorite: !point.isFavorite,
-    //   });
-    // });
+      this._onDataChange(this, point, {
+        isFavorite: !point.isFavorite,
+      });
+    });
 
-    render(this._container, this._eventComponent, RenderPosition.BEFOREEND);
+    if (oldEventEditComponent && oldEventComponent) {
+      replace(this._eventComponent, oldEventComponent);
+      replace(this._eventEditComponent, oldEventEditComponent);
+    } else {
+      render(this._container, this._eventComponent, RenderPosition.BEFOREEND);
+    }
+
+    // render(this._container, this._eventComponent, RenderPosition.BEFOREEND);
   }
 
   _replaceEventToEdit() {
@@ -57,5 +66,4 @@ export default class PointController {
       document.removeEventListener(`keydown`, this._onEscKeyDown);
     }
   }
-
 }
