@@ -2,7 +2,7 @@ import DayComponent from '../components/day.js';
 import TripDaysSectionComponent from '../components/trip-days-section.js';
 import NoEventsComponent from '../components/no-events.js';
 import SortComponent, {SortType} from '../components/sort.js';
-import PointController from "./point-controller.js";
+import PointController from './point-controller.js';
 
 import {render, RenderPosition} from '../utils/render.js';
 import {getGroupedEvents} from '../utils/common.js';

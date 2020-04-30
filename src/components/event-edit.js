@@ -1,5 +1,6 @@
-import {castDateFormatForEdit, castTimeFormat} from "../utils/common.js";
-import AbstractSmartComponent from "./abstract-smart-component.js";
+import {castDateFormatForEdit, castTimeFormat} from '../utils/common.js';
+import AbstractSmartComponent from './abstract-smart-component.js';
+import {offersForTypes} from '../mock/trip-event.js';
 
 const createOffersDataMarkup = (offers, index) => {
   if (!offers) {
@@ -43,7 +44,7 @@ const createTypesMarkup = (types, index) => {
     return (
       `<div class="event__type-item">
         <input id="event-type-${typeInFormat}-${index}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${typeInFormat}">
-        <label class="event__type-label  event__type-label--${typeInFormat}" for="event-type-${typeInFormat}-${index}">${type}</label>
+        <label class="event__type-label event__type-label--${typeInFormat}" for="event-type-${typeInFormat}-${index}">${type}</label>
       </div>`
     );
   }).join(`\n`);
@@ -74,7 +75,6 @@ const createDestinationMarkup = (destination) => {
   const descriptionMarkup = `<p class="event__destination-description"> ${destination.description} </p>`;
   const photosMarkup = createPhotosMarkup(destination.photos);
 
-
   return (
     `<section class="event__section  event__section--destination">
       <h3 class="event__section-title  event__section-title--destination">Destination</h3>
@@ -85,9 +85,9 @@ const createDestinationMarkup = (destination) => {
 };
 
 
-const createEventEditTemplate = (event, index) => {
-
-  const {type, activityTypes, transferTypes, city, cities, availableOffers, startDate, endDate, price, destination} = event;
+const createEventEditTemplate = (event, options = {}, index) => {
+  const {activityTypes, transferTypes, cities, startDate, endDate, price, destination} = event;
+  const {type, city, availableOffers} = options;
 
   const offersDataMarkup = createOffersDataMarkup(availableOffers, index);
 
@@ -187,13 +187,18 @@ export default class EventEdit extends AbstractSmartComponent {
     super();
     this._event = event;
     this._submitHandler = null;
+    this._typeInputClickHandler = null;
     this._favBtnClickHandler = null;
     this._index = index;
-    // this._subscribeOnEvents();
+    this._type = event.type;
+    this._city = event.city;
+    this._availableOffers = event.availableOffers;
+    this._subscribeOnEvents();
+
   }
 
   getTemplate() {
-    return createEventEditTemplate(this._event, this._index);
+    return createEventEditTemplate(this._event, {type: this._type, city: this._city, availableOffers: this._availableOffers}, this._index);
   }
 
   setSubmitHandler(handler) {
@@ -207,13 +212,35 @@ export default class EventEdit extends AbstractSmartComponent {
     this._favBtnClickHandler = handler;
   }
 
+  setTypeInputClickHandler(handler) {
+    this.getElement().querySelector(`.event__type-btn`)
+      .addEventListener(`click`, handler);
+    this._typeInputClickHandler = handler;
+  }
+
   rerender() {
     super.rerender();
   }
 
   recoveryListeners() {
     this.setSubmitHandler(this._submitHandler);
-    this._setFavoritesButtonClickHandler(this._favBtnClickHandler);
+    this.setFavoritesButtonClickHandler(this._favBtnClickHandler);
+    this._subscribeOnEvents();
+  }
+
+  _subscribeOnEvents() {
+    const element = this.getElement();
+
+    const typeLabels = element.querySelectorAll(`.event__type-label`);
+    typeLabels.forEach((label) => {
+      label.addEventListener(`click`, (evt) => {
+        const type = evt.target.parentNode.querySelector(`.event__type-input`).value;
+
+        this._type = type[0].toUpperCase() + type.slice(1);
+        this._availableOffers = offersForTypes[this._type];
+        this.rerender();
+      });
+    });
 
   }
 }

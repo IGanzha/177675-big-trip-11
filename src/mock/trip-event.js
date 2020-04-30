@@ -99,7 +99,7 @@ const allOffers = [
   }
 ];
 
-const offersForTypes = {
+export const offersForTypes = {
   'Flight': getRandomArray(allOffers),
   'Taxi': getRandomArray(allOffers),
   'Train': getRandomArray(allOffers),

@@ -1,4 +1,4 @@
-import EventComponent from "../components/event.js";
+import EventComponent from '../components/event.js';
 import EventEditComponent from '../components/event-edit.js';
 import {render, replace, RenderPosition} from '../utils/render.js';
 
@@ -10,6 +10,7 @@ export default class PointController {
     this._index = index;
     this._eventComponent = null;
     this._eventEditComponent = null;
+    this._type = null;
 
     this._onEscKeyDown = this._onEscKeyDown.bind(this);
   }
@@ -39,14 +40,13 @@ export default class PointController {
       });
     });
 
+
     if (oldEventEditComponent && oldEventComponent) {
       replace(this._eventComponent, oldEventComponent);
       replace(this._eventEditComponent, oldEventEditComponent);
     } else {
       render(this._container, this._eventComponent, RenderPosition.BEFOREEND);
     }
-
-    // render(this._container, this._eventComponent, RenderPosition.BEFOREEND);
   }
 
   _replaceEventToEdit() {
