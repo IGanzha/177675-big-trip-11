@@ -1,6 +1,8 @@
 import {castDateFormatForEdit, castTimeFormat} from '../utils/common.js';
 import AbstractSmartComponent from './abstract-smart-component.js';
 import {offersForTypes, getRandomArrayItem, generateDestination} from '../mock/trip-event.js';
+import flatpickr from 'flatpickr';
+import 'flatpickr/dist/flatpickr.min.css';
 
 const createOffersDataMarkup = (offers, index) => {
   if (!offers) {
@@ -194,12 +196,17 @@ export default class EventEdit extends AbstractSmartComponent {
     this._availableOffers = event.availableOffers;
     this._cities = event.cities;
     this._destination = event.destination;
+    this._startDate = event.startDate;
+    this._endDate = event.endDate;
 
     this._submitHandler = null;
     this._typeInputClickHandler = null;
     this._favBtnClickHandler = null;
 
     this._subscribeOnEvents();
+
+    this._flatpickr = null;
+    this._applyFlatpickr();
 
   }
 
@@ -226,6 +233,7 @@ export default class EventEdit extends AbstractSmartComponent {
 
   rerender() {
     super.rerender();
+    this._applyFlatpickr();
   }
 
   reset() {
@@ -241,6 +249,35 @@ export default class EventEdit extends AbstractSmartComponent {
     this.setSubmitHandler(this._submitHandler);
     this.setFavoritesButtonClickHandler(this._favBtnClickHandler);
     this._subscribeOnEvents();
+  }
+
+  _applyFlatpickr() {
+    // const Russian = require("flatpickr/dist/l10n/ru.js").default.ru;
+    if (this._flatpickr) {
+      // При своем создании `flatpickr` дополнительно создает вспомогательные DOM-элементы.
+      // Что бы их удалять, нужно вызывать метод `destroy` у созданного инстанса `flatpickr`.
+      this._flatpickr.destroy();
+      this._flatpickr = null;
+    }
+
+      const dateElements = this.getElement().querySelectorAll(`.event__input--time`);
+      this._flatpickr = flatpickr(dateElements[0], {
+        enableTime: true,
+        dateFormat: "d/m/Y H:i",
+        time_24hr: true,
+        defaultDate: this._startDate,
+      });
+
+      this._flatpickr = flatpickr(dateElements[1], {
+        enableTime: true,
+        dateFormat: "d/m/Y H:i",
+        time_24hr: true,
+        defaultDate: this._endDate,
+      });
+
+
+
+
   }
 
   _subscribeOnEvents() {
