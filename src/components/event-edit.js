@@ -228,6 +228,15 @@ export default class EventEdit extends AbstractSmartComponent {
     super.rerender();
   }
 
+  reset() {
+    const event = this._event;
+    this._type = event.type;
+    this._city = event.city;
+    this._destination = event.destination;
+
+    this.rerender();
+  }
+
   recoveryListeners() {
     this.setSubmitHandler(this._submitHandler);
     this.setFavoritesButtonClickHandler(this._favBtnClickHandler);
