@@ -1,6 +1,6 @@
 import {castDateFormatForEdit, castTimeFormat} from '../utils/common.js';
 import AbstractSmartComponent from './abstract-smart-component.js';
-import {offersForTypes} from '../mock/trip-event.js';
+import {offersForTypes, getRandomArrayItem, generateDestination} from '../mock/trip-event.js';
 
 const createOffersDataMarkup = (offers, index) => {
   if (!offers) {
@@ -185,14 +185,20 @@ const createEventEditTemplate = (event, options = {}, index) => {
 export default class EventEdit extends AbstractSmartComponent {
   constructor(event, index) {
     super();
+
     this._event = event;
-    this._submitHandler = null;
-    this._typeInputClickHandler = null;
-    this._favBtnClickHandler = null;
+
     this._index = index;
     this._type = event.type;
     this._city = event.city;
     this._availableOffers = event.availableOffers;
+    this._cities = event.cities;
+    this._destination = event.destination;
+
+    this._submitHandler = null;
+    this._typeInputClickHandler = null;
+    this._favBtnClickHandler = null;
+
     this._subscribeOnEvents();
 
   }
@@ -238,9 +244,17 @@ export default class EventEdit extends AbstractSmartComponent {
 
         this._type = type[0].toUpperCase() + type.slice(1);
         this._availableOffers = offersForTypes[this._type];
+        this._city = getRandomArrayItem(this._cities);
+        this._event.destination = generateDestination();
         this.rerender();
       });
     });
 
+    const destinationCityInput = element.querySelector(`.event__input--destination`);
+    destinationCityInput.addEventListener(`change`, () => {
+      this._city = destinationCityInput.value;
+      this._event.destination = generateDestination();
+      this.rerender();
+    });
   }
 }
