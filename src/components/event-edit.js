@@ -1,4 +1,4 @@
-import {castDateFormatForEdit, castTimeFormat} from '../utils/common.js';
+import {formatTime, formatDateForEdit} from '../utils/common.js';
 import AbstractSmartComponent from './abstract-smart-component.js';
 import {offersForTypes, getRandomArrayItem, generateDestination} from '../mock/trip-event.js';
 import flatpickr from 'flatpickr';
@@ -90,17 +90,16 @@ const createDestinationMarkup = (destination) => {
 const createEventEditTemplate = (event, options = {}, index) => {
   const {activityTypes, transferTypes, cities, startDate, endDate, price, destination} = event;
   const {type, city, availableOffers} = options;
-
   const offersDataMarkup = createOffersDataMarkup(availableOffers, index);
 
   const transferTypesMarkup = createTypesMarkup(transferTypes, index);
   const activityTypesMarkup = createTypesMarkup(activityTypes, index);
   const destinationsListMarkup = createDestinationsListMarkup(cities);
 
-  const startDay = castDateFormatForEdit(startDate, `/`);
-  const startTime = castTimeFormat(startDate);
-  const endDay = castDateFormatForEdit(endDate, `/`);
-  const endTime = castTimeFormat(endDate);
+  const startDay = formatDateForEdit(startDate);
+  const startTime = formatTime(startDate);
+  const endDay = formatDateForEdit(endDate);
+  const endTime = formatTime(endDate);
 
   const isEventFavorite = (event.isFavorite) ? `checked` : ``;
   const preposition = activityTypes.includes(type) ? `in` : `to`;
@@ -252,32 +251,26 @@ export default class EventEdit extends AbstractSmartComponent {
   }
 
   _applyFlatpickr() {
-    // const Russian = require("flatpickr/dist/l10n/ru.js").default.ru;
+
+    const dateFormat = `d/m/y H:i`;
+    const enableTime = true;
     if (this._flatpickr) {
-      // При своем создании `flatpickr` дополнительно создает вспомогательные DOM-элементы.
-      // Что бы их удалять, нужно вызывать метод `destroy` у созданного инстанса `flatpickr`.
       this._flatpickr.destroy();
       this._flatpickr = null;
     }
 
-      const dateElements = this.getElement().querySelectorAll(`.event__input--time`);
-      this._flatpickr = flatpickr(dateElements[0], {
-        enableTime: true,
-        dateFormat: "d/m/Y H:i",
-        time_24hr: true,
-        defaultDate: this._startDate,
-      });
+    const dateElements = this.getElement().querySelectorAll(`.event__input--time`);
+    this._flatpickr = flatpickr(dateElements[0], {
+      enableTime,
+      dateFormat,
+      defaultDate: this._startDate,
+    });
 
-      this._flatpickr = flatpickr(dateElements[1], {
-        enableTime: true,
-        dateFormat: "d/m/Y H:i",
-        time_24hr: true,
-        defaultDate: this._endDate,
-      });
-
-
-
-
+    this._flatpickr = flatpickr(dateElements[1], {
+      enableTime,
+      dateFormat,
+      defaultDate: this._endDate,
+    });
   }
 
   _subscribeOnEvents() {
