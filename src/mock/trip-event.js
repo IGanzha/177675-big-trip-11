@@ -133,6 +133,7 @@ const createEvent = function () {
   const endDate = getRandomEndDate(startDate);
   const city = getRandomArrayItem(cities);
   return {
+    id: String(new Date() + Math.random()),
     type,
     activityTypes,
     transferTypes,
