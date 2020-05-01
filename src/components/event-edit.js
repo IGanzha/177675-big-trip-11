@@ -1,6 +1,8 @@
-import {castDateFormatForEdit, castTimeFormat} from '../utils/common.js';
+import {formatTime, formatDateForEdit} from '../utils/common.js';
 import AbstractSmartComponent from './abstract-smart-component.js';
 import {offersForTypes, getRandomArrayItem, generateDestination} from '../mock/trip-event.js';
+import flatpickr from 'flatpickr';
+import 'flatpickr/dist/flatpickr.min.css';
 
 const createOffersDataMarkup = (offers, index) => {
   if (!offers) {
@@ -88,17 +90,16 @@ const createDestinationMarkup = (destination) => {
 const createEventEditTemplate = (event, options = {}, index) => {
   const {activityTypes, transferTypes, cities, startDate, endDate, price, destination} = event;
   const {type, city, availableOffers} = options;
-
   const offersDataMarkup = createOffersDataMarkup(availableOffers, index);
 
   const transferTypesMarkup = createTypesMarkup(transferTypes, index);
   const activityTypesMarkup = createTypesMarkup(activityTypes, index);
   const destinationsListMarkup = createDestinationsListMarkup(cities);
 
-  const startDay = castDateFormatForEdit(startDate, `/`);
-  const startTime = castTimeFormat(startDate);
-  const endDay = castDateFormatForEdit(endDate, `/`);
-  const endTime = castTimeFormat(endDate);
+  const startDay = formatDateForEdit(startDate);
+  const startTime = formatTime(startDate);
+  const endDay = formatDateForEdit(endDate);
+  const endTime = formatTime(endDate);
 
   const isEventFavorite = (event.isFavorite) ? `checked` : ``;
   const preposition = activityTypes.includes(type) ? `in` : `to`;
@@ -194,12 +195,17 @@ export default class EventEdit extends AbstractSmartComponent {
     this._availableOffers = event.availableOffers;
     this._cities = event.cities;
     this._destination = event.destination;
+    this._startDate = event.startDate;
+    this._endDate = event.endDate;
 
     this._submitHandler = null;
     this._typeInputClickHandler = null;
     this._favBtnClickHandler = null;
 
     this._subscribeOnEvents();
+
+    this._flatpickr = null;
+    this._applyFlatpickr();
 
   }
 
@@ -226,6 +232,7 @@ export default class EventEdit extends AbstractSmartComponent {
 
   rerender() {
     super.rerender();
+    this._applyFlatpickr();
   }
 
   reset() {
@@ -241,6 +248,29 @@ export default class EventEdit extends AbstractSmartComponent {
     this.setSubmitHandler(this._submitHandler);
     this.setFavoritesButtonClickHandler(this._favBtnClickHandler);
     this._subscribeOnEvents();
+  }
+
+  _applyFlatpickr() {
+
+    const dateFormat = `d/m/y H:i`;
+    const enableTime = true;
+    if (this._flatpickr) {
+      this._flatpickr.destroy();
+      this._flatpickr = null;
+    }
+
+    const dateElements = this.getElement().querySelectorAll(`.event__input--time`);
+    this._flatpickr = flatpickr(dateElements[0], {
+      enableTime,
+      dateFormat,
+      defaultDate: this._startDate,
+    });
+
+    this._flatpickr = flatpickr(dateElements[1], {
+      enableTime,
+      dateFormat,
+      defaultDate: this._endDate,
+    });
   }
 
   _subscribeOnEvents() {

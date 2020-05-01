@@ -1,25 +1,16 @@
-import {getTwoNumbersFormat, castDateFormat, castTimeFormat} from '../utils/common.js';
+import {formatDate, formatTime, getFormattedTimeDuration} from '../utils/common.js';
 import AbstractSmartComponent from "./abstract-smart-component.js";
 
 const CHOSEN_OFFERS_TO_PREVIEW = 3;
-const MILISEC_IN_DAY = 1000 * 60 * 60 * 24;
-const MILISEC_IN_HOUR = 1000 * 60 * 60;
-const MILISEC_IN_MINUTE = 1000 * 60;
 
 const createTimeMarkup = (start, end) => {
 
-  const startDay = castDateFormat(start, `-`);
-  const startTime = castTimeFormat(start);
-  const endDay = castDateFormat(end, `-`);
-  const endTime = castTimeFormat(end);
+  const startDay = formatDate(start);
+  const startTime = formatTime(start);
+  const endDay = formatDate(end);
+  const endTime = formatTime(end);
 
-  const duration = end - start;
-
-  const durationDays = getTwoNumbersFormat(Math.floor(duration / MILISEC_IN_DAY));
-  const durationHours = getTwoNumbersFormat(Math.floor((duration % MILISEC_IN_DAY) / MILISEC_IN_HOUR));
-  const durationMinutes = getTwoNumbersFormat(Math.floor(((duration % MILISEC_IN_DAY) % MILISEC_IN_HOUR) / MILISEC_IN_MINUTE));
-
-  const eventDuration = `${(durationDays >= 1) ? `${durationDays}D` : ``} ${(durationDays >= 1 || durationHours >= 1) ? `${durationHours}H` : ``} ${durationMinutes}M`;
+  const eventDuration = getFormattedTimeDuration(start, end);
 
   return (
     `<p class="event__time">
@@ -59,7 +50,6 @@ const createChosenOffersMarkup = (offersArray, offersAmount = `${offersArray.len
 const createEventTemplate = (event) => {
 
   const {type, city, availableOffers, activityTypes, price, startDate, endDate} = event;
-
   const shortListChosenOffersMarkup = createChosenOffersMarkup(availableOffers, CHOSEN_OFFERS_TO_PREVIEW);
   const timeMarkup = createTimeMarkup(startDate, endDate);
   const preposition = activityTypes.includes(type) ? `in` : `to`;

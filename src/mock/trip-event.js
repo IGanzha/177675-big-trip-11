@@ -1,4 +1,4 @@
-import {castDateFormat} from '../utils/common.js';
+import {formatDate} from '../utils/common.js';
 
 export const getRandomArrayItem = (array) => {
   const randomIndex = getRandomIntegerNumber(0, array.length);
@@ -143,7 +143,7 @@ const createEvent = function () {
     price: getRandomIntegerNumber(MIN_EVENT_PRICE, MAX_EVENT_PRICE),
     startDate,
     endDate,
-    dateForGroup: castDateFormat(startDate, `-`),
+    dateForGroup: formatDate(startDate),
     isFavorite: getTrueOrFalse(),
   };
 };
