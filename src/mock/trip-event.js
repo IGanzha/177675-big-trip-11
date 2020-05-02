@@ -15,7 +15,8 @@ export const getRandomArray = (array) => {
 
 const getRandomStartDate = () => {
   const targetDate = new Date();
-  const diffDaysValue = getRandomIntegerNumber(0, 3);
+  const sign = Math.random() > 0.5 ? 1 : -1;
+  const diffDaysValue = sign * getRandomIntegerNumber(0, 5);
   const diffHoursValue = getRandomIntegerNumber(0, 23);
   const diffMinutesValue = getRandomIntegerNumber(0, 59);
   targetDate.setDate(targetDate.getDate() + diffDaysValue);
@@ -27,6 +28,8 @@ const getRandomStartDate = () => {
 
 const getRandomEndDate = (startDate) => {
   const targetDate = new Date();
+
+
   const diffDaysValue = getRandomIntegerNumber(0, 3);
   const diffHoursValue = getRandomIntegerNumber(0, 23);
   const diffMinutesValue = getRandomIntegerNumber(0, 59);

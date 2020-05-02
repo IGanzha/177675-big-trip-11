@@ -31,7 +31,6 @@ const renderPoints = (eventListElement, points, sortType, onDataChange, onViewCh
 };
 
 const getSortedPoints = (points, sortType) => {
-
   let sortedPoints = [];
   switch (sortType) {
     case SortType.TIME_DOWN:
@@ -85,11 +84,13 @@ export default class TripController {
     this._sortComponent = new SortComponent();
     this._tripDaysSectionComponent = new TripDaysSectionComponent();
 
-    this._sortComponent.setSortTypeChangeHandler(this._onSortTypeChange);
-
     this._onDataChange = this._onDataChange.bind(this);
     this._onSortTypeChange = this._onSortTypeChange.bind(this);
     this._onViewChange = this._onViewChange.bind(this);
+    this._onFilterChange = this._onFilterChange.bind(this);
+
+    this._sortComponent.setSortTypeChangeHandler(this._onSortTypeChange);
+    this._pointsModel.setFilterChangeHandler(this._onFilterChange);
   }
 
   render() {
@@ -104,12 +105,27 @@ export default class TripController {
     render(container, this._sortComponent, RenderPosition.AFTERBEGIN);
     render(container, this._tripDaysSectionComponent, RenderPosition.BEFOREEND);
 
+    this._renderPoints(points);
+  }
 
+  _renderPoints(points) {
     const tripDaysList = this._tripDaysSectionComponent.getElement();
     const sortedPoints = getSortedPoints(points, this._sortComponent.getSortType());
 
     const tripPoints = renderPoints(tripDaysList, sortedPoints, this._sortComponent.getSortType(), this._onDataChange, this._onViewChange);
     this._showedEventControllers = this._showedEventControllers.concat(tripPoints);
+  }
+
+  _removePoints() {
+    this._showedEventControllers.forEach((pointController) => pointController.destroy());
+    this._showedEventControllers = [];
+    const tripDaysList = this._tripDaysSectionComponent.getElement();
+    tripDaysList.innerHTML = ``;
+  }
+
+  _updatePoints() {
+    this._removePoints();
+    this._renderPoints(this._pointsModel.getPoints());
   }
 
   _onSortTypeChange(sortType) {
@@ -121,23 +137,19 @@ export default class TripController {
   }
 
   _onDataChange(pointController, data, modificator) {
-    // const index = this._events.findIndex((tripEvent) => tripEvent === data);
-    // if (index === -1) {
-    //   return;
-    // }
-
     const isSuccess = this._taskModel.updatePoint(data.id, modificator);
 
     const modifiedPoint = Object.assign(data, modificator);
     if (isSuccess) {
       pointController.render(modifiedPoint);
     }
-
-    // this._events = [].concat(this._events.slice(0, index), modifiedPoint, this._events.slice(index + 1));
-    // pointController.render(this._events[index]);
   }
 
   _onViewChange() {
     this._showedEventControllers.forEach((it) => it.setDefaultView());
+  }
+
+  _onFilterChange() {
+    this._updatePoints();
   }
 }

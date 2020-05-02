@@ -1,15 +1,15 @@
 
-import TotalPriceComponent from './components/total-price.js';
-import FilterComponent from './components/filter.js';
+import FilterController from './controllers/filter-controller.js';
 import MenuComponent from './components/menu.js';
-import TripInfoComponent from './components/trip-info.js';
-import TripControllerComponent from './controllers/trip-controller.js';
 import PointsModel from './models/points.js';
+import TotalPriceComponent from './components/total-price.js';
+import TripController from './controllers/trip-controller.js';
+import TripInfoComponent from './components/trip-info.js';
 
 
-import {render, RenderPosition} from './utils/render.js';
-import {filterNames} from './mock/filter.js';
 import {createEvents} from './mock/trip-event.js';
+// import {filterNames} from './mock/filter.js';
+import {render, RenderPosition} from './utils/render.js';
 
 const EVENTS_COUNT = 10;
 const points = createEvents(EVENTS_COUNT);
@@ -27,8 +27,10 @@ const menuHeaderElement = tripControlsElement.querySelector(`h2`);
 render(menuHeaderElement, new MenuComponent(), RenderPosition.AFTER);
 
 const tripEventsSection = document.querySelector(`.trip-events`);
-render(tripControlsElement, new FilterComponent(filterNames), RenderPosition.BEFOREEND);
 
+// render(tripControlsElement, new FilterComponent(filterNames), RenderPosition.BEFOREEND);
+const filterController = new FilterController(tripControlsElement, pointsModel);
+filterController.render();
 
-const tripControllerComponent = new TripControllerComponent(tripEventsSection, pointsModel);
-tripControllerComponent.render(points);
+const tripController = new TripController(tripEventsSection, pointsModel);
+tripController.render(points);
