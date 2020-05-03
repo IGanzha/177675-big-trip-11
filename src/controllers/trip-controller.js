@@ -2,11 +2,10 @@ import DayComponent from '../components/day.js';
 import TripDaysSectionComponent from '../components/trip-days-section.js';
 import NoEventsComponent from '../components/no-events.js';
 import SortComponent, {SortType} from '../components/sort.js';
-import PointController from './point-controller.js';
+import PointController, {Mode as PointControllerMode, EmptyPoint} from './point-controller.js';
 
 import {render, RenderPosition} from '../utils/render.js';
 import {getGroupedEvents} from '../utils/common.js';
-
 
 const renderPoints = (eventListElement, points, sortType, onDataChange, onViewChange) => {
   const groupedByDayEvents = getGroupedEvents(points, `dateForGroup`, sortType);
@@ -21,7 +20,7 @@ const renderPoints = (eventListElement, points, sortType, onDataChange, onViewCh
     const dayPoints = groupedByDayEvents[day];
     dayPoints.map((point) => {
       const pointController = new PointController(dayPointsList, index, onDataChange, onViewChange);
-      pointController.render(point);
+      pointController.render(point, PointControllerMode.DEFAULT);
       index++;
       newPoints.push(pointController);
       return pointController;
@@ -83,6 +82,7 @@ export default class TripController {
     this._noEventsComponent = new NoEventsComponent();
     this._sortComponent = new SortComponent();
     this._tripDaysSectionComponent = new TripDaysSectionComponent();
+    this._creatingTask = null;
 
     this._onDataChange = this._onDataChange.bind(this);
     this._onSortTypeChange = this._onSortTypeChange.bind(this);
@@ -106,6 +106,16 @@ export default class TripController {
     render(container, this._tripDaysSectionComponent, RenderPosition.BEFOREEND);
 
     this._renderPoints(points);
+  }
+
+  createPoint() {
+    if (this._creatingTask) {
+      return;
+    }
+
+    const pointListElement = this._pointComponent.getElement();
+    this._creatingTask = new PointController(pointListElement, this._onDataChange, this._onViewChange);
+    this._creatingTask.render(EmptyPoint, PointControllerMode.ADDING);
   }
 
   _renderPoints(points) {
@@ -136,12 +146,30 @@ export default class TripController {
     this._showedEventControllers = this._showedEventControllers.concat(tripPoints);
   }
 
-  _onDataChange(pointController, data, modificator) {
-    const isSuccess = this._taskModel.updatePoint(data.id, modificator);
+  _onDataChange(pointController, oldData, newData) {
+    // if (oldData === EmptyPoint) {
+    //   this._creatingPoint = null;
 
-    const modifiedPoint = Object.assign(data, modificator);
-    if (isSuccess) {
-      pointController.render(modifiedPoint);
+    //   if (newData === null) {
+    //     pointController.destroy();
+    //     this._updatePoints();
+
+    //   } else {
+    //     this._pointsModel.addPoint(newData);
+    //     pointController.render(newData, PointControllerMode.DEFAULT);
+
+    //     this._showedPointControllers = [].concat(pointController, this._showedPointControllers);
+    //   }
+
+    // } else if (newData === null) {
+    if (newData === null) {
+      this._pointsModel.removePoint(oldData.id);
+      this._updatePoints();
+    } else {
+      const isSuccess = this._pointsModel.updatePoint(oldData.id, newData);
+      if (isSuccess) {
+        pointController.render(newData, PointControllerMode.DEFAULT);
+      }
     }
   }
 

@@ -1,4 +1,5 @@
 import {formatDate} from '../utils/common.js';
+import {CITIES, ACTIVITY_TYPES, TRANSFER_TYPES} from '../const.js';
 
 export const getRandomArrayItem = (array) => {
   const randomIndex = getRandomIntegerNumber(0, array.length);
@@ -44,44 +45,32 @@ const getTrueOrFalse = () => {
   return Math.random() > 0.5;
 };
 
-const transferTypes = [`Taxi`, `Bus`, `Train`, `Ship`, `Transport`, `Drive`, `Flight`];
-export const activityTypes = [`Check-in`, `Sightseeing`, `Restaurant`];
-const eventTypes = [].concat(transferTypes, activityTypes);
-
-
 const MIN_EVENT_PRICE = 10;
 const MAX_EVENT_PRICE = 300;
 
-const cities = [
-  `Amsterdam`,
-  `Chamonix `,
-  `Geneva`,
-  `Saint Petersburg`,
-];
-
 const allOffers = [
   {
-    id: `luggage`,
+    id: `event-offer-luggage`,
     text: `Add luggage`,
     price: 30,
     checked: getTrueOrFalse(),
   }, {
-    id: `comfort`,
+    id: `event-offer-comfort`,
     text: `Switch to comfort class`,
     price: 100,
     checked: getTrueOrFalse(),
   }, {
-    id: `meal`,
+    id: `event-offer-meal`,
     text: `Add meal`,
     price: 15,
     checked: getTrueOrFalse(),
   }, {
-    id: `seats`,
+    id: `event-offer-seats`,
     text: `Choose seats`,
     price: 5,
     checked: getTrueOrFalse(),
   }, {
-    id: `train`,
+    id: `event-offer-train`,
     text: `Travel by train`,
     price: 40,
     checked: getTrueOrFalse(),
@@ -131,19 +120,16 @@ export const generateDestination = () => {
 };
 
 const createEvent = function () {
-  const type = getRandomArrayItem(eventTypes);
+  const type = getRandomArrayItem(Math.random() > 0.5 ? ACTIVITY_TYPES : TRANSFER_TYPES);
   const startDate = getRandomStartDate();
   const endDate = getRandomEndDate(startDate);
-  const city = getRandomArrayItem(cities);
+  const city = getRandomArrayItem(CITIES);
   return {
     id: String(new Date() + Math.random()),
     type,
-    activityTypes,
-    transferTypes,
     city,
-    cities,
     destination: generateDestination(),
-    availableOffers: offersForTypes[type],
+    offers: offersForTypes[type],
     price: getRandomIntegerNumber(MIN_EVENT_PRICE, MAX_EVENT_PRICE),
     startDate,
     endDate,

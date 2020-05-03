@@ -1,5 +1,6 @@
-import {formatTime, formatDateForEdit} from '../utils/common.js';
 import AbstractSmartComponent from './abstract-smart-component.js';
+import {CITIES, ACTIVITY_TYPES, TRANSFER_TYPES} from '../const.js';
+import {capitalizeFirstLetter, formatTime, formatDateForEdit} from '../utils/common.js';
 import {offersForTypes, getRandomArrayItem, generateDestination} from '../mock/trip-event.js';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
@@ -12,8 +13,8 @@ const createOffersDataMarkup = (offers, index) => {
   const offersMarkup = offers.map((offer)=> {
     return (
       `<div class="event__offer-selector">
-        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.id}-${index}" type="checkbox" name="event-offer-${offer.id}" ${(offer.checked) ? `checked` : ``}>
-        <label class="event__offer-label" for="event-offer-${offer.id}-${index}">
+        <input class="event__offer-checkbox  visually-hidden" id="${offer.id}-${index}" type="checkbox" name="${offer.id}" ${(offer.checked) ? `checked` : ``}>
+        <label class="event__offer-label" for="${offer.id}-${index}">
           <span class="event__offer-title">${offer.text}</span>
           &plus;
           &euro;&nbsp;<span class="event__offer-price">${offer.price}</span>
@@ -40,12 +41,12 @@ const createDestinationsListMarkup = (cities) => {
   }).join(`\n`);
 };
 
-const createTypesMarkup = (types, index) => {
-  return types.map((type) => {
+const createTypesMarkup = (typesArr, chosenType, index) => {
+  return typesArr.map((type) => {
     const typeInFormat = type.toLowerCase();
     return (
       `<div class="event__type-item">
-        <input id="event-type-${typeInFormat}-${index}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${typeInFormat}">
+        <input id="event-type-${typeInFormat}-${index}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${typeInFormat}" ${type === chosenType ? `checked` : ``}>
         <label class="event__type-label event__type-label--${typeInFormat}" for="event-type-${typeInFormat}-${index}">${type}</label>
       </div>`
     );
@@ -88,13 +89,13 @@ const createDestinationMarkup = (destination) => {
 
 
 const createEventEditTemplate = (event, options = {}, index) => {
-  const {activityTypes, transferTypes, cities, startDate, endDate, price, destination} = event;
-  const {type, city, availableOffers} = options;
-  const offersDataMarkup = createOffersDataMarkup(availableOffers, index);
+  const {startDate, endDate, price, destination} = event;
+  const {type, city, offers} = options;
+  const offersDataMarkup = createOffersDataMarkup(offers, index);
 
-  const transferTypesMarkup = createTypesMarkup(transferTypes, index);
-  const activityTypesMarkup = createTypesMarkup(activityTypes, index);
-  const destinationsListMarkup = createDestinationsListMarkup(cities);
+  const transferTypesMarkup = createTypesMarkup(TRANSFER_TYPES, type, index);
+  const activityTypesMarkup = createTypesMarkup(ACTIVITY_TYPES, type, index);
+  const destinationsListMarkup = createDestinationsListMarkup(CITIES);
 
   const startDay = formatDateForEdit(startDate);
   const startTime = formatTime(startDate);
@@ -102,7 +103,7 @@ const createEventEditTemplate = (event, options = {}, index) => {
   const endTime = formatTime(endDate);
 
   const isEventFavorite = (event.isFavorite) ? `checked` : ``;
-  const preposition = activityTypes.includes(type) ? `in` : `to`;
+  const preposition = ACTIVITY_TYPES.includes(type) ? `in` : `to`;
   const destinationMarkup = createDestinationMarkup(destination);
 
   return (
@@ -183,6 +184,52 @@ const createEventEditTemplate = (event, options = {}, index) => {
   );
 };
 
+const parseFormData = (editFormData, allOffersArr) => {
+
+  const getOffers = (formData, allOffers) => {
+
+    if (!allOffers) {
+      return [];
+    } else {
+
+      const allOffersNames = [];
+      allOffers.forEach((offer) => {
+        allOffersNames.push(offer.id);
+      });
+
+      const chosenOffersNames = [];
+      allOffersNames.forEach((offer) => {
+        if (formData.get(offer)) {
+          chosenOffersNames.push(offer);
+        }
+      });
+
+      return allOffers.map((offer) => {
+        if (chosenOffersNames.includes(offer.id)) {
+          return Object.assign({}, offer, {
+            checked: true,
+          });
+        } else {
+          return Object.assign({}, offer, {
+            checked: false,
+          });
+        }
+      });
+    }
+  };
+
+  const chosenTypesArr = editFormData.getAll(`event-type`);
+
+  return {
+    type: capitalizeFirstLetter(chosenTypesArr[0]),
+    city: editFormData.get(`event-destination`),
+    startDate: editFormData.get(`event-start-time`),
+    endDate: editFormData.get(`event-end-time`),
+    price: editFormData.get(`event-price`),
+    offers: getOffers(editFormData, allOffersArr),
+  };
+};
+
 export default class EventEdit extends AbstractSmartComponent {
   constructor(event, index) {
     super();
@@ -192,8 +239,8 @@ export default class EventEdit extends AbstractSmartComponent {
     this._index = index;
     this._type = event.type;
     this._city = event.city;
-    this._availableOffers = event.availableOffers;
-    this._cities = event.cities;
+    this._offers = event.offers;
+    this._cities = CITIES;
     this._destination = event.destination;
     this._startDate = event.startDate;
     this._endDate = event.endDate;
@@ -201,6 +248,7 @@ export default class EventEdit extends AbstractSmartComponent {
     this._submitHandler = null;
     this._typeInputClickHandler = null;
     this._favBtnClickHandler = null;
+    this._deleteButtonClickHandler = null;
 
     this._subscribeOnEvents();
 
@@ -210,24 +258,18 @@ export default class EventEdit extends AbstractSmartComponent {
   }
 
   getTemplate() {
-    return createEventEditTemplate(this._event, {type: this._type, city: this._city, availableOffers: this._availableOffers}, this._index);
+    return createEventEditTemplate(this._event, {type: this._type, city: this._city, offers: this._offers}, this._index);
+  }
+
+  getData() {
+    const form = this.getElement().querySelector(`.event--edit`);
+    const formData = new FormData(form);
+    return parseFormData(formData, this._offers);
   }
 
   setSubmitHandler(handler) {
     this.getElement().querySelector(`form`).addEventListener(`submit`, handler);
     this._submitHandler = handler;
-  }
-
-  setFavoritesButtonClickHandler(handler) {
-    this.getElement().querySelector(`.event__favorite-btn`)
-      .addEventListener(`click`, handler);
-    this._favBtnClickHandler = handler;
-  }
-
-  setTypeInputClickHandler(handler) {
-    this.getElement().querySelector(`.event__type-btn`)
-      .addEventListener(`click`, handler);
-    this._typeInputClickHandler = handler;
   }
 
   rerender() {
@@ -244,10 +286,63 @@ export default class EventEdit extends AbstractSmartComponent {
     this.rerender();
   }
 
+  removeElement() {
+    if (this._flatpickr) {
+      this._flatpickr.destroy();
+      this._flatpickr = null;
+    }
+
+    super.removeElement();
+  }
+
   recoveryListeners() {
     this.setSubmitHandler(this._submitHandler);
     this.setFavoritesButtonClickHandler(this._favBtnClickHandler);
+    this.setDeleteButtonClickHandler(this._deleteButtonClickHandler);
     this._subscribeOnEvents();
+  }
+
+  setFavoritesButtonClickHandler(handler) {
+    this.getElement().querySelector(`.event__favorite-btn`)
+      .addEventListener(`click`, handler);
+    this._favBtnClickHandler = handler;
+  }
+
+  setTypeInputClickHandler(handler) {
+    this.getElement().querySelector(`.event__type-btn`)
+      .addEventListener(`click`, handler);
+    this._typeInputClickHandler = handler;
+  }
+
+  setDeleteButtonClickHandler(handler) {
+    this.getElement().querySelector(`.event__reset-btn`)
+      .addEventListener(`click`, handler);
+
+    this._deleteButtonClickHandler = handler;
+  }
+
+  _subscribeOnEvents() {
+    const element = this.getElement();
+
+    const typeLabels = element.querySelectorAll(`.event__type-label`);
+    typeLabels.forEach((label) => {
+      label.addEventListener(`click`, (evt) => {
+        const type = evt.target.parentNode.querySelector(`.event__type-input`).value;
+
+        this._type = capitalizeFirstLetter(type);
+        this._offers = offersForTypes[this._type];
+        this._city = getRandomArrayItem(this._cities);
+        this._event.destination = generateDestination();
+        this.rerender();
+      });
+    });
+
+    const destinationCityInput = element.querySelector(`.event__input--destination`);
+    destinationCityInput.addEventListener(`change`, () => {
+      this._city = destinationCityInput.value;
+      this._event.destination = generateDestination();
+      this.rerender();
+    });
   }
 
   _applyFlatpickr() {
@@ -270,30 +365,6 @@ export default class EventEdit extends AbstractSmartComponent {
       enableTime,
       dateFormat,
       defaultDate: this._endDate,
-    });
-  }
-
-  _subscribeOnEvents() {
-    const element = this.getElement();
-
-    const typeLabels = element.querySelectorAll(`.event__type-label`);
-    typeLabels.forEach((label) => {
-      label.addEventListener(`click`, (evt) => {
-        const type = evt.target.parentNode.querySelector(`.event__type-input`).value;
-
-        this._type = type[0].toUpperCase() + type.slice(1);
-        this._availableOffers = offersForTypes[this._type];
-        this._city = getRandomArrayItem(this._cities);
-        this._event.destination = generateDestination();
-        this.rerender();
-      });
-    });
-
-    const destinationCityInput = element.querySelector(`.event__input--destination`);
-    destinationCityInput.addEventListener(`change`, () => {
-      this._city = destinationCityInput.value;
-      this._event.destination = generateDestination();
-      this.rerender();
     });
   }
 }

@@ -16,6 +16,11 @@ export const formatTime = (date) => {
   return moment(date).format(`HH:mm`);
 };
 
+export const capitalizeFirstLetter = (string) => {
+  return string[0].toUpperCase() + string.slice(1);
+};
+
+
 export const getFormattedTimeDuration = (startDate, endDate) => {
 
   // высчитываю разницу для проверки
