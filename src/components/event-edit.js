@@ -144,7 +144,7 @@ const createEventEditTemplate = (event, options = {}, index) => {
             <label class="visually-hidden" for="event-start-time-${index}">
               From
             </label>
-            <input class="event__input  event__input--time" id="event-start-time-${index}" type="text" name="event-start-time" value="${startDay} ${startTime}">
+            <input class="event__input  event__input--time" id="event-start-time-${index}" type="text" name="event-start-time" value="${startDay}T${startTime}">
             &mdash;
             <label class="visually-hidden" for="event-end-time-${index}">
               To
@@ -218,13 +218,20 @@ const parseFormData = (editFormData, allOffersArr) => {
     }
   };
 
+  const changeDateFormatForFormData = (dateString) => {
+    const monthIndex = dateString[3] + dateString[4];
+    const dayIndex = dateString[0] + dateString[1];
+
+    return monthIndex + `/` + dayIndex + dateString.slice(5);
+  };
+
   const chosenTypesArr = editFormData.getAll(`event-type`);
 
   return {
     type: capitalizeFirstLetter(chosenTypesArr[0]),
     city: editFormData.get(`event-destination`),
-    startDate: editFormData.get(`event-start-time`),
-    endDate: editFormData.get(`event-end-time`),
+    startDate: new Date(changeDateFormatForFormData(editFormData.get(`event-start-time`))),
+    endDate: new Date(changeDateFormatForFormData(editFormData.get(`event-end-time`))),
     price: editFormData.get(`event-price`),
     offers: getOffers(editFormData, allOffersArr),
   };

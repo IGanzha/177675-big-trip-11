@@ -24,8 +24,13 @@ export default class SiteMenu extends AbstractComponent {
 
   }
 
-
   setOnChange() {
-
+    this._getElement().querySelectorAll(`.trip-tabs__btn`).forEach((tab) => {
+      if (tab.classList.contains(`trip-tabs__btn--active`)) {
+        tab.classList.remove(`trip-tabs__btn--active`);
+      } else {
+        tab.classList.add(`trip-tabs__btn--active`);
+      }
+    });
   }
 }

@@ -31,3 +31,13 @@ filterController.render();
 
 const tripController = new TripController(tripEventsSection, pointsModel);
 tripController.render(points);
+
+const addButton = document.querySelector(`.trip-main__event-add-btn`);
+
+const onAddPointButtonClick = () => {
+  tripController.createPoint();
+};
+
+addButton.addEventListener(`click`, onAddPointButtonClick);
+
+

@@ -9,7 +9,7 @@ export const Mode = {
 };
 
 export const EmptyPoint = {
-  type: ``,
+  type: `Flight`,
   city: ``,
   destination: {},
   offers: [],
@@ -54,6 +54,8 @@ export default class PointController {
       this._onDataChange(this, point, Object.assign({}, point, {
         isFavorite: !point.isFavorite,
       }));
+
+      // TODO: убрать замену формы редактирования на карточку при щелчке на favorite. при смене формы не сохраняются выбранные опции - исправить.
     });
 
     this._eventEditComponent.setSubmitHandler((evt) => {
@@ -67,12 +69,25 @@ export default class PointController {
 
     // console.log(oldEventEditComponent);
     // console.log(oldEventComponent);
-    if (oldEventEditComponent && oldEventComponent) {
-      replace(this._eventComponent, oldEventComponent);
-      replace(this._eventEditComponent, oldEventEditComponent);
-      this._replaceEditToEvent();
-    } else {
-      render(this._container, this._eventComponent, RenderPosition.BEFOREEND);
+
+    switch (mode) {
+      case Mode.DEFAULT:
+        if (oldEventEditComponent && oldEventComponent) {
+          replace(this._eventComponent, oldEventComponent);
+          replace(this._eventEditComponent, oldEventEditComponent);
+          this._replaceEditToEvent();
+        } else {
+          render(this._container, this._eventComponent, RenderPosition.BEFOREEND);
+        }
+        break;
+      case Mode.ADDING:
+        if (oldEventEditComponent && oldEventComponent) {
+          remove(oldEventComponent);
+          remove(oldEventEditComponent);
+        }
+        document.addEventListener(`keydown`, this._onEscKeyDown);
+        render(this._container, this._eventEditComponent, RenderPosition.AFTERBEGIN);
+        break;
     }
   }
 
@@ -107,6 +122,9 @@ export default class PointController {
     const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
 
     if (isEscKey) {
+      if (this._mode === Mode.ADDING) {
+        this._onDataChange(this, EmptyPoint, null);
+      }
       this._replaceEditToEvent();
       document.removeEventListener(`keydown`, this._onEscKeyDown);
     }
