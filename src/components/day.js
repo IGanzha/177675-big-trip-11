@@ -1,5 +1,6 @@
 import AbstractComponent from "./abstract-component.js";
 
+// TODO: реализовать через moment
 const NumberToMonth = {
   1: `JAN`,
   2: `FEB`,
@@ -14,13 +15,14 @@ const NumberToMonth = {
   11: `NOV`,
   12: `DEC`,
 };
-
+// TODO: реализовать через moment?
 const castMonthFormat = (dateString) => {
   const monthNumber = +(dateString[5] + dateString[6]);
   return NumberToMonth[monthNumber];
 };
 
 const createDayTemplate = (date, dayIndex) => {
+  // TODO: реализовать через moment
   const month = castMonthFormat(date);
   const day = date[8] + date[9];
 

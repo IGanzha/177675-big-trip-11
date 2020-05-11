@@ -5,7 +5,7 @@ export const getTwoNumbersFormat = (number) => {
 };
 
 export const formatDate = (date) => {
-  return moment(date).format(`YYYY-MM-DD`);
+  return moment(date).format(`Y-MM-DD`);
 };
 
 export const formatDateForEdit = (date) => {
@@ -15,6 +15,11 @@ export const formatDateForEdit = (date) => {
 export const formatTime = (date) => {
   return moment(date).format(`HH:mm`);
 };
+
+export const capitalizeFirstLetter = (string) => {
+  return string[0].toUpperCase() + string.slice(1);
+};
+
 
 export const getFormattedTimeDuration = (startDate, endDate) => {
 
@@ -43,14 +48,14 @@ export const getFormattedTimeDuration = (startDate, endDate) => {
   return moment(difference).utc().format(`DDD[D] H[H] mm[M]`);
 };
 
-export const getGroupedEvents = (arr, field, sortType) => {
+export const getGroupedByDayPoints = (arr, sortType) => {
   const result = {};
   if (sortType === `events-up`) {
     arr.forEach((event) => {
-      if (result[event[field]] === undefined) {
-        result[event[field]] = [];
+      if (result[formatDate(event.startDate)] === undefined) {
+        result[formatDate(event.startDate)] = [];
       }
-      result[event[field]].push(event);
+      result[formatDate(event.startDate)].push(event);
     });
   } else {
     result[`noGroup`] = arr;
