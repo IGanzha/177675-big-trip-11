@@ -1,6 +1,7 @@
 import EventComponent from '../components/event.js';
 import EventEditComponent from '../components/event-edit.js';
 import {render, replace, remove, RenderPosition} from '../utils/render.js';
+import {offersForTypes} from '../mock/trip-event.js';
 
 export const Mode = {
   ADDING: `adding`,
@@ -12,7 +13,7 @@ export const EmptyPoint = {
   type: `Flight`,
   city: ``,
   destination: {},
-  offers: [],
+  offers: offersForTypes[`Flight`],
   price: 0,
   startDate: new Date(),
   endDate: new Date(),

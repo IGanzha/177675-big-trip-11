@@ -70,7 +70,6 @@ const getSortedPoints = (points, sortType) => {
       });
       break;
   }
-
   return sortedPoints;
 };
 
@@ -113,9 +112,12 @@ export default class TripController {
   _renderPoints(points) {
     const tripDaysList = this._tripDaysSectionComponent.getElement();
     const sortedPoints = getSortedPoints(points, this._sortComponent.getSortType());
-    // console.log(this._onDataChange);
     const tripPoints = renderPoints(tripDaysList, sortedPoints, this._sortComponent.getSortType(), this._onDataChange, this._onViewChange);
     this._showedEventControllers = this._showedEventControllers.concat(tripPoints);
+  }
+
+  resetSort() {
+    this._onSortTypeChange(SortType.EVENTS_UP);
   }
 
   createPoint() {
@@ -131,8 +133,6 @@ export default class TripController {
     const dayPointsElement = dayComponent.getElement().querySelector(`.trip-events__list`);
     this._creatingPoint = new PointController(dayPointsElement, 0, this._onDataChange, this._onViewChange);
     this._creatingPoint.render(EmptyPoint, PointControllerMode.ADDING);
-
-    this._updatePoints();
   }
 
   _removePoints() {
@@ -161,7 +161,7 @@ export default class TripController {
 
       if (newData === null) {
         pointController.destroy();
-        this._updatePoints();
+        // this._updatePoints();
 
       } else {
         this._pointsModel.addPoint(newData);
@@ -169,7 +169,7 @@ export default class TripController {
 
         this._showedPointControllers = [].concat(pointController, this._showedPointControllers);
         pointController.destroy();
-        this._updatePoints();
+        // this._updatePoints();
       }
 
     } else if (newData === null) {
@@ -179,9 +179,10 @@ export default class TripController {
       const isSuccess = this._pointsModel.updatePoint(oldData.id, newData);
       if (isSuccess) {
         // pointController.render(newData, PointControllerMode.DEFAULT);
-        this._updatePoints();
+        // this._updatePoints();
       }
     }
+    this._updatePoints();
   }
 
   _onViewChange() {
