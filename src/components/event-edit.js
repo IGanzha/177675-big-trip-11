@@ -4,6 +4,13 @@ import {capitalizeFirstLetter, formatTime, formatDateForEdit} from '../utils/com
 import {offersForTypes, getRandomArrayItem, generateDestination} from '../mock/trip-event.js';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
+import {encode} from 'he';
+
+const createCitiesPattern = (citiesList) => {
+  return citiesList.map((city) => {
+    return `[` + city[0].toUpperCase() + city[0].toLowerCase() + `]` + city.slice(1);
+  }).join(`|`);
+};
 
 const createOffersDataMarkup = (offers, index) => {
   if (!offers) {
@@ -90,12 +97,15 @@ const createDestinationMarkup = (destination) => {
 
 const createEventEditTemplate = (event, options = {}, index) => {
   const {startDate, endDate, price, destination} = event;
-  const {type, city, offers} = options;
+  const {type, currentCity, offers} = options;
   const offersDataMarkup = createOffersDataMarkup(offers, index);
 
   const transferTypesMarkup = createTypesMarkup(TRANSFER_TYPES, type, index);
   const activityTypesMarkup = createTypesMarkup(ACTIVITY_TYPES, type, index);
   const destinationsListMarkup = createDestinationsListMarkup(CITIES);
+
+  const city = encode(currentCity);
+  // const price = encode(notSanitizedPrice);
 
   const startDay = formatDateForEdit(startDate);
   const startTime = formatTime(startDate);
@@ -105,6 +115,8 @@ const createEventEditTemplate = (event, options = {}, index) => {
   const isEventFavorite = (event.isFavorite) ? `checked` : ``;
   const preposition = ACTIVITY_TYPES.includes(type) ? `in` : `to`;
   const destinationMarkup = createDestinationMarkup(destination);
+
+  const citiesPattern = createCitiesPattern(CITIES);
 
   return (
     `<li class="trip-events__item">
@@ -134,7 +146,7 @@ const createEventEditTemplate = (event, options = {}, index) => {
             <label class="event__label  event__type-output" for="event-destination-${index}">
               ${type} ${preposition}
             </label>
-            <input class="event__input  event__input--destination" id="event-destination-${index}" type="text" name="event-destination" value="${city}" list="destination-list-${index}">
+            <input class="event__input  event__input--destination" id="event-destination-${index}" type="text" name="event-destination" value="${city}" list="destination-list-${index}" required pattern="${citiesPattern}">
             <datalist id="destination-list-${index}">
               ${destinationsListMarkup}
             </datalist>
@@ -157,7 +169,7 @@ const createEventEditTemplate = (event, options = {}, index) => {
               <span class="visually-hidden">Price</span>
               &euro;
             </label>
-            <input class="event__input  event__input--price" id="event-price-${index}" type="text" name="event-price" value="${price}">
+            <input class="event__input  event__input--price" id="event-price-${index}" type="number" name="event-price" value="${price}">
           </div>
 
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -245,12 +257,13 @@ export default class EventEdit extends AbstractSmartComponent {
 
     this._index = index;
     this._type = event.type;
-    this._city = event.city;
     this._offers = event.offers;
     this._cities = CITIES;
     this._destination = event.destination;
     this._startDate = event.startDate;
     this._endDate = event.endDate;
+    this._currentCity = event.city;
+
 
     this._submitHandler = null;
     this._typeInputClickHandler = null;
@@ -265,7 +278,7 @@ export default class EventEdit extends AbstractSmartComponent {
   }
 
   getTemplate() {
-    return createEventEditTemplate(this._event, {type: this._type, city: this._city, offers: this._offers}, this._index);
+    return createEventEditTemplate(this._event, {type: this._type, offers: this._offers, currentCity: this._currentCity}, this._index);
   }
 
   getData() {
@@ -289,6 +302,7 @@ export default class EventEdit extends AbstractSmartComponent {
     this._type = event.type;
     this._city = event.city;
     this._destination = event.destination;
+    this._currentCity = event.city;
 
     this.rerender();
   }
@@ -346,7 +360,7 @@ export default class EventEdit extends AbstractSmartComponent {
 
     const destinationCityInput = element.querySelector(`.event__input--destination`);
     destinationCityInput.addEventListener(`change`, () => {
-      this._city = destinationCityInput.value;
+      this._currentCity = destinationCityInput.value;
       this._event.destination = generateDestination();
       this.rerender();
     });

@@ -10,7 +10,7 @@ export const ACTIVITY_TYPES = [`Check-in`, `Sightseeing`, `Restaurant`];
 
 export const CITIES = [
   `Amsterdam`,
-  `Chamonix `,
+  `Chamonix`,
   `Geneva`,
   `Saint Petersburg`,
 ];

@@ -1,6 +1,7 @@
 import AbstractSmartComponent from "./abstract-smart-component.js";
 import {ACTIVITY_TYPES} from '../const.js';
 import {formatDate, formatTime, getFormattedTimeDuration} from '../utils/common.js';
+import {encode} from 'he';
 
 
 const CHOSEN_OFFERS_TO_PREVIEW = 3;
@@ -51,10 +52,12 @@ const createChosenOffersMarkup = (offersArray, offersAmount = `${offersArray.len
 
 const createEventTemplate = (event) => {
 
-  const {type, city, offers, price, startDate, endDate} = event;
+  const {type, city: notSanitizedCity, offers, price, startDate, endDate} = event;
   const shortListChosenOffersMarkup = createChosenOffersMarkup(offers, CHOSEN_OFFERS_TO_PREVIEW);
   const timeMarkup = createTimeMarkup(startDate, endDate);
   const preposition = ACTIVITY_TYPES.includes(type) ? `in` : `to`;
+
+  const city = encode(notSanitizedCity);
 
   return (
     `<li class="trip-events__item">
