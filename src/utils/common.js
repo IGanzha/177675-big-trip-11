@@ -1,5 +1,7 @@
 import moment from 'moment';
 
+const HOURS_IN_DAY = 24;
+
 export const getTwoNumbersFormat = (number) => {
   return String(number).padStart(2, `0`);
 };
@@ -23,29 +25,15 @@ export const capitalizeFirstLetter = (string) => {
 
 export const getFormattedTimeDuration = (startDate, endDate) => {
 
-  // высчитываю разницу для проверки
-  // const start = moment(startDate).clone();
-  // const end = moment(endDate).clone();
-
-  // const days = end.diff(start, `days`);
-  // console.log(`дней! - `, days);
-
-  // start.add(days, `days`);
-  // const hours = end.diff(start, `hours`);
-  // console.log(`часов! - `, hours);
-
-  // start.add(hours, `hours`);
-  // const minutes = end.diff(start, `minutes`);
-  // console.log(`минут! - `, minutes);
-
   const difference = moment(endDate).diff(moment(startDate));
-  // // console.log(`милисек `, difference);
-  // // console.log(`сек `, difference/1000);
-  // console.log(`мин `, difference/(1000*60));
-  // console.log(`часов `, difference/(1000*60*60));
-  // console.log(`дней `, difference/(1000*60*60*24));
+  const duration = moment.duration(difference);
 
-  return moment(difference).utc().format(`DDD[D] H[H] mm[M]`);
+  const days = (parseInt(duration.asDays(), 10) > 0) ? `${parseInt(duration.asDays(), 10)}D` : ``;
+
+  const hours = (parseInt(duration.asHours(), 10) > 0 || parseInt(duration.asDays(), 10) > 0) ? ` ${parseInt(duration.asHours(), 10) - parseInt(duration.asDays(), 10) * HOURS_IN_DAY}H` : ``;
+
+  const minutes = ` ${parseInt(duration.minutes(), 10)}M`;
+  return days + hours + minutes;
 };
 
 export const getGroupedByDayPoints = (arr, sortType) => {

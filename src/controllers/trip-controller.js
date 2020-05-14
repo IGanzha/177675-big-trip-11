@@ -11,7 +11,6 @@ const renderPoints = (eventListElement, points, sortType, onDataChange, onViewCh
   const groupedByDayEvents = getGroupedByDayPoints(points, sortType);
   const newPoints = [];
   let dayNumber = 0;
-  // TODO: реализовать корректное отражение дней
   let index = 1;
   for (const day of Object.keys(groupedByDayEvents)) {
     dayNumber++;
@@ -94,6 +93,14 @@ export default class TripController {
     this._pointsModel.setFilterChangeHandler(this._onFilterChange);
   }
 
+  hide() {
+    this._container.classList.add(`visually-hidden`);
+  }
+
+  show() {
+    this._container.classList.remove(`visually-hidden`);
+  }
+
   render() {
     const container = this._container;
     const points = this._pointsModel.getPoints();
@@ -133,6 +140,7 @@ export default class TripController {
     const dayPointsElement = dayComponent.getElement().querySelector(`.trip-events__list`);
     this._creatingPoint = new PointController(dayPointsElement, 0, this._onDataChange, this._onViewChange);
     this._creatingPoint.render(EmptyPoint, PointControllerMode.ADDING);
+    this._onViewChange();
   }
 
   _removePoints() {
@@ -165,7 +173,7 @@ export default class TripController {
 
       } else {
         this._pointsModel.addPoint(newData);
-        // pointController.render(newData, PointControllerMode.DEFAULT);
+        pointController.render(newData, PointControllerMode.DEFAULT);
 
         this._showedPointControllers = [].concat(pointController, this._showedPointControllers);
         pointController.destroy();
@@ -178,7 +186,7 @@ export default class TripController {
     } else {
       const isSuccess = this._pointsModel.updatePoint(oldData.id, newData);
       if (isSuccess) {
-        // pointController.render(newData, PointControllerMode.DEFAULT);
+        pointController.render(newData, PointControllerMode.DEFAULT);
         // this._updatePoints();
       }
     }
