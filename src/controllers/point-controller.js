@@ -55,8 +55,9 @@ export default class PointController {
       this._onDataChange(this, point, Object.assign({}, point, {
         isFavorite: !point.isFavorite,
       }));
+      this._mode = Mode.EDIT;
 
-      // TODO: убрать замену формы редактирования на карточку при щелчке на favorite. при смене формы не сохраняются выбранные опции - исправить.
+      // TODO: убрать замену формы редактирования на карточку при щелчке на favorite. при смене формы после щелчка на favorite не сохраняются выбранные опции - исправить.
     });
 
     this._eventEditComponent.setSubmitHandler((evt) => {
@@ -67,9 +68,6 @@ export default class PointController {
     });
 
     this._eventEditComponent.setDeleteButtonClickHandler(() => this._onDataChange(this, point, null));
-
-    // console.log(oldEventEditComponent);
-    // console.log(oldEventComponent);
 
     switch (mode) {
       case Mode.DEFAULT:

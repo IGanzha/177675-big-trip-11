@@ -1,4 +1,4 @@
-import AbstractComponent from "./abstract-component.js";
+import AbstractSmartComponent from './abstract-smart-component.js';
 
 export const SortType = {
   TIME_DOWN: `time-down`,
@@ -6,18 +6,18 @@ export const SortType = {
   EVENTS_UP: `events-up`,
 };
 
-const createSortTemplate = () => {
+const createSortTemplate = (sortType) => {
   return (
     `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
       <span class="trip-sort__item  trip-sort__item--day">Day</span>
 
       <div class="trip-sort__item  trip-sort__item--event">
-        <input id="sort-event" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-event" checked>
+        <input id="sort-event" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-event" ${sortType === SortType.EVENTS_UP ? `checked` : ``}>
         <label data-sort-type="${SortType.EVENTS_UP}" class="trip-sort__btn" for="sort-event">Event</label>
       </div>
 
       <div class="trip-sort__item  trip-sort__item--time">
-        <input id="sort-time"  class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-time">
+        <input id="sort-time"  class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-time" ${sortType === SortType.TIME_DOWN ? `checked` : ``}>
         <label data-sort-type="${SortType.TIME_DOWN}" class="trip-sort__btn" for="sort-time">
           Time
           <svg class="trip-sort__direction-icon" width="8" height="10" viewBox="0 0 8 10">
@@ -27,7 +27,7 @@ const createSortTemplate = () => {
       </div>
 
       <div class="trip-sort__item  trip-sort__item--price">
-        <input id="sort-price" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-price">
+        <input id="sort-price" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-price" ${sortType === SortType.PRICE_DOWN ? `checked` : ``}>
         <label data-sort-type="${SortType.PRICE_DOWN}" class="trip-sort__btn" for="sort-price">
           Price
           <svg class="trip-sort__direction-icon" width="8" height="10" viewBox="0 0 8 10">
@@ -41,21 +41,28 @@ const createSortTemplate = () => {
   );
 };
 
-export default class Sort extends AbstractComponent {
+export default class Sort extends AbstractSmartComponent {
   constructor() {
     super();
+    this._handler = null;
+
     this._currentSortType = SortType.EVENTS_UP;
   }
 
   getTemplate() {
-    return createSortTemplate();
+    return createSortTemplate(this._currentSortType);
   }
 
   getSortType() {
     return this._currentSortType;
   }
 
+  recoveryListeners() {
+    this.setSortTypeChangeHandler(this._handler);
+  }
+
   setSortTypeChangeHandler(handler) {
+    this._handler = handler;
     this.getElement().addEventListener(`click`, (evt) => {
       evt.preventDefault();
 
@@ -71,6 +78,7 @@ export default class Sort extends AbstractComponent {
       this._currentSortType = sortType;
 
       handler(this._currentSortType);
+      this.rerender();
     });
   }
 }
