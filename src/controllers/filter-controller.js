@@ -28,6 +28,7 @@ export default class FilterController {
 
     this._filterComponent = new FilterComponent(filters);
     this._filterComponent.setFilterChangeHandler(this._onFilterChange);
+    this._filterComponent.setDefaultViewHandler();
 
     if (oldComponent) {
       replace(this._filterComponent, oldComponent);

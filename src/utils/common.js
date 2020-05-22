@@ -2,6 +2,16 @@ import moment from 'moment';
 
 const HOURS_IN_DAY = 24;
 
+
+export const getRandomArrayItem = (array) => {
+  const randomIndex = getRandomIntegerNumber(0, array.length);
+  return array[randomIndex];
+};
+
+const getRandomIntegerNumber = (min, max) => {
+  return min + Math.floor(Math.random() * (max - min));
+};
+
 export const getTwoNumbersFormat = (number) => {
   return String(number).padStart(2, `0`);
 };
@@ -21,7 +31,6 @@ export const formatTime = (date) => {
 export const capitalizeFirstLetter = (string) => {
   return string[0].toUpperCase() + string.slice(1);
 };
-
 
 export const getFormattedTimeDuration = (startDate, endDate) => {
 
@@ -51,3 +60,8 @@ export const getGroupedByDayPoints = (arr, sortType) => {
 
   return result;
 };
+
+export const getOffersForCurrentType = (type, allOffers) => {
+  return allOffers.find((offerObj) => (offerObj.type === type));
+};
+

@@ -4,7 +4,7 @@ import {formatDate, formatTime, getFormattedTimeDuration} from '../utils/common.
 import {encode} from 'he';
 
 
-const CHOSEN_OFFERS_TO_PREVIEW = 3;
+const CHOSEN_OFFERS_AMOUNT_TO_PREVIEW = 3;
 
 const createTimeMarkup = (start, end) => {
 
@@ -27,20 +27,18 @@ const createTimeMarkup = (start, end) => {
 };
 
 const createChosenOffersMarkup = (offersArray, offersAmount = `${offersArray.length}`) => {
-
   if (!offersArray) {
     return ``;
   }
 
   const chosenOffers = offersArray.filter((offer) => {
-
-    return offer.checked;
+    return offer.isChecked;
   });
 
   return (chosenOffers.length === 0) ? `` : chosenOffers.slice(0, offersAmount).map((offer)=> {
     return (
       `<li class="event__offer">
-        <span class="event__offer-title">${offer.text}</span>
+        <span class="event__offer-title">${offer.title}</span>
         &plus;
         &euro;&nbsp;<span class="event__offer-price">${offer.price}</span>
       </li>`
@@ -49,11 +47,11 @@ const createChosenOffersMarkup = (offersArray, offersAmount = `${offersArray.len
 
 };
 
-
 const createEventTemplate = (event) => {
 
-  const {type, city: notSanitizedCity, offers, price, startDate, endDate} = event;
-  const shortListChosenOffersMarkup = createChosenOffersMarkup(offers, CHOSEN_OFFERS_TO_PREVIEW);
+  const {type, city: notSanitizedCity, chosenOffers, price, startDate, endDate} = event;
+
+  const shortListChosenOffersMarkup = createChosenOffersMarkup(chosenOffers, CHOSEN_OFFERS_AMOUNT_TO_PREVIEW);
   const timeMarkup = createTimeMarkup(startDate, endDate);
   const preposition = ACTIVITY_TYPES.includes(type) ? `in` : `to`;
 

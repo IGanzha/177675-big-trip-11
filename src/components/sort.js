@@ -61,6 +61,11 @@ export default class Sort extends AbstractSmartComponent {
     this.setSortTypeChangeHandler(this._handler);
   }
 
+  setDefaultView() {
+    this._currentSortType = SortType.EVENTS_UP;
+    this.rerender();
+  }
+
   setSortTypeChangeHandler(handler) {
     this._handler = handler;
     this.getElement().addEventListener(`click`, (evt) => {
