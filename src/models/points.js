@@ -24,6 +24,7 @@ export default class Points {
   }
 
   setFilter(filterType) {
+
     this._activeFilterType = filterType;
     this._callHandlers(this._filterChangeHandlers);
   }
@@ -35,7 +36,6 @@ export default class Points {
     }
 
     this._points = [].concat(this._points.slice(0, index), point, this._points.slice(index + 1));
-
     this._callHandlers(this._dataChangeHandlers);
 
     return true;
@@ -43,7 +43,6 @@ export default class Points {
 
   removePoint(id) {
     const index = this._points.findIndex((point) => point.id === id);
-
     if (index === -1) {
       return false;
     }
