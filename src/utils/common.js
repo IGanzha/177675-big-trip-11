@@ -2,8 +2,7 @@ import moment from 'moment';
 
 const HOURS_IN_DAY = 24;
 
-
-export const getRandomArrayItem = (array) => {
+const getRandomArrayItem = (array) => {
   const randomIndex = getRandomIntegerNumber(0, array.length);
   return array[randomIndex];
 };
@@ -12,11 +11,11 @@ const getRandomIntegerNumber = (min, max) => {
   return min + Math.floor(Math.random() * (max - min));
 };
 
-export const capitalizeFirstLetter = (string) => {
+const capitalizeFirstLetter = (string) => {
   return string[0].toUpperCase() + string.slice(1);
 };
 
-export const getTimeDuration = (startDate, endDate) => {
+const getTimeDuration = (startDate, endDate) => {
 
   const difference = moment(endDate).diff(moment(startDate));
   const duration = moment.duration(difference);
@@ -29,22 +28,24 @@ export const getTimeDuration = (startDate, endDate) => {
   return days + hours + minutes;
 };
 
-export const getGroupedByDayPoints = (arr, sortType) => {
+const getGroupedByDayPoints = (points, sortType) => {
   const result = {};
   if (sortType === `events-up`) {
-    arr.forEach((event) => {
-      if (result[moment(event.startDate).format(`Y-MM-DD`)] === undefined) {
-        result[moment(event.startDate).format(`Y-MM-DD`)] = [];
+    points.forEach((point) => {
+      if (result[moment(point.startDate).format(`Y-MM-DD`)] === undefined) {
+        result[moment(point.startDate).format(`Y-MM-DD`)] = [];
       }
-      result[moment(event.startDate).format(`Y-MM-DD`)].push(event);
+      result[moment(point.startDate).format(`Y-MM-DD`)].push(point);
     });
   } else {
-    result[`noGroup`] = arr;
+    result[`noGroup`] = points;
   }
 
   return result;
 };
 
-export const getOffersForCurrentType = (type, allOffers) => {
-  return allOffers.find((offerObj) => (offerObj.type === type));
+const getOffersForCurrentType = (type, allOffers) => {
+  return allOffers.find((offer) => (offer.type === type));
 };
+
+export {getRandomArrayItem, capitalizeFirstLetter, getTimeDuration, getGroupedByDayPoints, getOffersForCurrentType};

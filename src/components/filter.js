@@ -40,6 +40,13 @@ export default class Filter extends AbstractComponent {
     this.getElement().elements[`trip-filter`].value = `everything`;
   }
 
+  setFilterChangeHandler(handler) {
+    this.getElement().addEventListener(`change`, (evt) => {
+      const filterName = getFilterNameById(evt.target.id);
+      handler(filterName);
+    });
+  }
+
   disableEmptyFilter(filterName, isDisabled) {
     const item = this.getElement().querySelector(`#filter-${filterName}`);
     item.disabled = isDisabled;
@@ -48,13 +55,6 @@ export default class Filter extends AbstractComponent {
     } else {
       item.parentNode.querySelector(`.trip-filters__filter-label`).style = ``;
     }
-  }
-
-  setFilterChangeHandler(handler) {
-    this.getElement().addEventListener(`change`, (evt) => {
-      const filterName = getFilterNameById(evt.target.id);
-      handler(filterName);
-    });
   }
 }
 

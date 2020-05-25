@@ -24,6 +24,7 @@ export default class Point {
 
   toRAW() {
     return {
+
       "id": this.id,
       "type": this.type.toLowerCase(),
       "date_from": this.startDate.toISOString(),

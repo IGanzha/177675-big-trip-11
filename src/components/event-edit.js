@@ -83,8 +83,8 @@ const createDestinationCityListMarkup = (cities) => {
   }).join(`\n`);
 };
 
-const createTypesMarkup = (typesArr, chosenType, index) => {
-  return typesArr.map((type) => {
+const createTypesMarkup = (types, chosenType, index) => {
+  return types.map((type) => {
     const typeInFormat = type.toLowerCase();
     return (
       `<div class="event__type-item">
@@ -144,9 +144,9 @@ const createRollUpButton = (point) => {
     </button>`) : ``;
 };
 
-const createEventEditTemplate = (event, options = {}, offersList, destinationsList) => {
-  const {startDate, endDate, price, destination, id} = event;
-  const {type, currentCity, chosenOffers, externalData} = options;
+const createEventEditTemplate = (point, options = {}, offersList, destinationsList) => {
+  const {type, chosenOffers, startDate, endDate, price, destination, id} = point;
+  const {currentCity, externalData} = options;
 
   const offersForCurrentType = getOffersForCurrentType(type, JSON.parse(JSON.stringify(offersList)));
   const offers = getFinalOffers(offersForCurrentType.offers, JSON.parse(JSON.stringify(chosenOffers)));
@@ -170,8 +170,8 @@ const createEventEditTemplate = (event, options = {}, offersList, destinationsLi
 
   const saveButtonText = externalData.saveButtonText;
 
-  const resetButton = createResetButton(event, externalData);
-  const rollUpButton = createRollUpButton(event);
+  const resetButton = createResetButton(point, externalData);
+  const rollUpButton = createRollUpButton(point);
 
   return (
     `<li class="trip-events__item">
@@ -230,7 +230,7 @@ const createEventEditTemplate = (event, options = {}, offersList, destinationsLi
           <button class="event__save-btn  btn  btn--blue" type="submit">${saveButtonText}</button>
           ${resetButton}
 
-          <input id="event-favorite-${id}" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${(event.isFavorite) ? `checked` : ``}>
+          <input id="event-favorite-${id}" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${(point.isFavorite) ? `checked` : ``}>
           <label class="event__favorite-btn ${(id === `new`) ? `visually-hidden` : ``}" for="event-favorite-${id}">
             <span class="visually-hidden">Add to favorite</span>
             <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
@@ -251,20 +251,14 @@ const createEventEditTemplate = (event, options = {}, offersList, destinationsLi
 };
 
 export default class EventEdit extends AbstractSmartComponent {
-  constructor(event, offersModel, destinationsModel) {
+  constructor(point, offersModel, destinationsModel) {
     super();
 
-    this._event = event;
+    this._point = point;
     this._offersModel = offersModel;
     this._destinationsModel = destinationsModel;
 
-    this._id = event.id;
-    this._type = event.type;
-    this._chosenOffers = event.chosenOffers;
-    this._destination = event.destination;
-    this._startDate = event.startDate;
-    this._endDate = event.endDate;
-    this._currentCity = event.city;
+    this._currentCity = point.city;
     this._externalData = DefaultData;
 
     this._submitHandler = null;
@@ -281,7 +275,7 @@ export default class EventEdit extends AbstractSmartComponent {
   }
 
   getTemplate() {
-    return createEventEditTemplate(this._event, {type: this._type, chosenOffers: this._chosenOffers, currentCity: this._currentCity, externalData: this._externalData}, this._offersModel.getOffers(), this._destinationsModel.getDestinations());
+    return createEventEditTemplate(this._point, {currentCity: this._currentCity, externalData: this._externalData}, this._offersModel.getOffers(), this._destinationsModel.getDestinations());
   }
 
   getData() {
@@ -303,11 +297,8 @@ export default class EventEdit extends AbstractSmartComponent {
   }
 
   reset() {
-    const event = this._event;
-    this._type = event.type;
-    this._currentCity = event.city;
-    this._destination = event.destination;
-
+    const point = this._point;
+    this._currentCity = point.city;
     this.rerender();
   }
 
@@ -378,16 +369,15 @@ export default class EventEdit extends AbstractSmartComponent {
     typeLabels.forEach((label) => {
       label.addEventListener(`click`, (evt) => {
         const type = evt.target.parentNode.querySelector(`.event__type-input`).value;
-        this._type = capitalizeFirstLetter(type);
-        this._offers = getOffersForCurrentType(this._type, JSON.parse(JSON.stringify(this._offersModel.getOffers()))).offers;
+        this._point.type = capitalizeFirstLetter(type);
         const randomDestination = getRandomArrayItem(this._destinationsModel.getDestinations());
         this._currentCity = randomDestination.city;
-        this._event.destination = {
+        this._point.destination = {
           description: randomDestination.description,
           photos: randomDestination.photos,
         };
         this.rerender();
-        this._event.destination = {};
+        this._point.destination = {};
       });
     });
 
@@ -395,7 +385,7 @@ export default class EventEdit extends AbstractSmartComponent {
     destinationCityInput.addEventListener(`change`, () => {
       this._currentCity = capitalizeFirstLetter(destinationCityInput.value);
       const destination = this._destinationsModel.getDestinations().find((destinationItem) => (destinationItem.city === this._currentCity));
-      this._event.destination = {
+      this._point.destination = {
         description: destination.description,
         photos: destination.photos,
       };
@@ -423,9 +413,9 @@ export default class EventEdit extends AbstractSmartComponent {
       altFormat: `d/m/y H:i`,
       altInput: true,
       allowInput: true,
-      defaultDate: this._startDate || `today`,
+      defaultDate: this._point.startDate || `today`,
       onClose: (selectedDates, dateStr) => {
-        this._startDate = dateStr;
+        this._point.startDate = dateStr;
         this._endDateFlatpickr.set(`minDate`, dateStr);
         this._endDateFlatpickr.open();
       },
@@ -437,9 +427,9 @@ export default class EventEdit extends AbstractSmartComponent {
       altFormat: `d/m/y H:i`,
       altInput: true,
       allowInput: true,
-      defaultDate: this._endDate || `today`,
+      defaultDate: this._point.endDate || `today`,
       onClose: (selectedDates, dateStr) => {
-        this._endDate = dateStr;
+        this._point.endDate = dateStr;
       },
     });
   }

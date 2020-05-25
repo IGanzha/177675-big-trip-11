@@ -1,7 +1,7 @@
 import {FilterType} from '../const.js';
 
 
-export const getFuturePoints = (points) => {
+const getFuturePoints = (points) => {
   const dateNow = new Date();
   const filteredPoints = points.filter((point) => {
     return point.startDate > dateNow;
@@ -10,7 +10,7 @@ export const getFuturePoints = (points) => {
   return (filteredPoints.length > 0) ? filteredPoints : [];
 };
 
-export const getPastPoints = (points) => {
+const getPastPoints = (points) => {
   const dateNow = new Date();
   const filteredPoints = points.filter((point) => {
     return point.endDate < dateNow;
@@ -18,7 +18,7 @@ export const getPastPoints = (points) => {
   return (filteredPoints.length > 0) ? filteredPoints : [];
 };
 
-export const getPointsByFilter = (points, filterType) => {
+const getPointsByFilter = (points, filterType) => {
   switch (filterType) {
     case FilterType.ALL:
       return points;
@@ -30,3 +30,5 @@ export const getPointsByFilter = (points, filterType) => {
 
   return points;
 };
+
+export {getFuturePoints, getPastPoints, getPointsByFilter};

@@ -1,30 +1,10 @@
 import AbstractComponent from "./abstract-component.js";
+import moment from 'moment';
 
-// TODO: реализовать через moment
-const NumberToMonth = {
-  1: `JAN`,
-  2: `FEB`,
-  3: `MAR`,
-  4: `APR`,
-  5: `MAY`,
-  6: `JUN`,
-  7: `JUL`,
-  8: `AUG`,
-  9: `SEP`,
-  10: `OKT`,
-  11: `NOV`,
-  12: `DEC`,
-};
-// TODO: реализовать через moment?
-const castMonthFormat = (dateString) => {
-  const monthNumber = +(dateString[5] + dateString[6]);
-  return NumberToMonth[monthNumber];
-};
 
 const createDayTemplate = (date, dayIndex) => {
-  // TODO: реализовать через moment
-  const month = castMonthFormat(date);
-  const day = date[8] + date[9];
+  const month = moment(date).format(`MMM`);
+  const day = moment(date).format(`DD`);
 
   const dayInfoMarkup = (date === `noGroup`) ? `` : (
     `<span class="day__counter">${dayIndex}</span>
@@ -32,7 +12,7 @@ const createDayTemplate = (date, dayIndex) => {
   );
 
   return (
-    `<li class="trip-days__item  day">
+    `<li class="trip-days__item day">
       <div class="day__info">
         ${dayInfoMarkup}
       </div>

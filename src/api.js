@@ -1,13 +1,8 @@
-import Point from './models/point.js';
-import Offer from './models/offer.js';
 import Destination from './models/destination.js';
+import Offer from './models/offer.js';
+import Point from './models/point.js';
+import {Method} from './const.js';
 
-const Method = {
-  GET: `GET`,
-  POST: `POST`,
-  PUT: `PUT`,
-  DELETE: `DELETE`
-};
 
 const checkStatus = (response) => {
   if (response.status >= 200 && response.status < 300) {
