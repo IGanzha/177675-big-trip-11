@@ -6,33 +6,29 @@ import PointsModel from './models/points.js';
 import SiteMenuComponent, {MenuItem} from './components/menu.js';
 import StatisticsComponent from './components/statistics.js';
 import TripController from './controllers/trip-controller.js';
-
 import {render, RenderPosition} from './utils/render.js';
 
 const AUTHORIZATION = `Basic randomString123`;
 const END_POINT = `https://11.ecmascript.pages.academy/big-trip`;
+
+const tripMainElement = document.querySelector(`.trip-main`);
+const tripControlsElement = tripMainElement.querySelector(`.trip-controls`);
+const menuHeaderElement = tripControlsElement.querySelector(`h2`);
+const tripEventsSection = document.querySelector(`.trip-events`);
+const pageBodyContainer = document.querySelector(`main .page-body__container`);
+
 
 const api = new API(END_POINT, AUTHORIZATION);
 const pointsModel = new PointsModel();
 const offersModel = new OffersModel();
 const destinationsModel = new DestinationsModel();
 
-const tripMainElement = document.querySelector(`.trip-main`);
-
 const siteMenuComponent = new SiteMenuComponent();
-
-const tripControlsElement = tripMainElement.querySelector(`.trip-controls`);
-const menuHeaderElement = tripControlsElement.querySelector(`h2`);
 render(menuHeaderElement, siteMenuComponent, RenderPosition.AFTER);
-
-const tripEventsSection = document.querySelector(`.trip-events`);
-
 const filterController = new FilterController(tripControlsElement, pointsModel);
-
 const tripController = new TripController(tripEventsSection, filterController, pointsModel, api, offersModel, destinationsModel);
-
 const statisticsComponent = new StatisticsComponent(pointsModel);
-const pageBodyContainer = document.querySelector(`main .page-body__container`);
+
 render(pageBodyContainer, statisticsComponent, RenderPosition.BEFOREEND);
 statisticsComponent.hide();
 

@@ -21,12 +21,12 @@ const createTimeMarkup = (start, end) => {
   );
 };
 
-const createChosenOffersMarkup = (offersArray, offersAmount = `${offersArray.length}`) => {
-  if (!offersArray) {
+const createChosenOffersMarkup = (offers, offersAmount = `${offers.length}`) => {
+  if (!offers) {
     return ``;
   }
 
-  const chosenOffers = offersArray.filter((offer) => {
+  const chosenOffers = offers.filter((offer) => {
     return offer.isChecked;
   });
 
@@ -39,12 +39,11 @@ const createChosenOffersMarkup = (offersArray, offersAmount = `${offersArray.len
       </li>`
     );
   }).join(`\n`);
-
 };
 
-const createEventTemplate = (event) => {
+const createEventTemplate = (point) => {
 
-  const {type, city: notSanitizedCity, chosenOffers, price, startDate, endDate} = event;
+  const {type, city: notSanitizedCity, chosenOffers, price, startDate, endDate} = point;
 
   const shortListChosenOffersMarkup = createChosenOffersMarkup(chosenOffers, CHOSEN_OFFERS_AMOUNT_TO_PREVIEW);
   const timeMarkup = createTimeMarkup(startDate, endDate);
@@ -82,13 +81,13 @@ const createEventTemplate = (event) => {
 };
 
 export default class Event extends AbstractSmartComponent {
-  constructor(event) {
+  constructor(point) {
     super();
-    this._event = event;
+    this._point = point;
   }
 
   getTemplate() {
-    return createEventTemplate(this._event);
+    return createEventTemplate(this._point);
   }
 
   setEditButtonClickHandler(handler) {

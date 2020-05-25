@@ -9,16 +9,17 @@ import {FilterType} from '../const.js';
 import {getGroupedByDayPoints} from '../utils/common.js';
 import {render, RenderPosition} from '../utils/render.js';
 
-const renderPoints = (eventListElement, points, sortType, onDataChange, onViewChange, offersModel, destinationsModel) => {
-  const groupedByDayEvents = getGroupedByDayPoints(points, sortType);
+
+const renderPoints = (eventList, points, sortType, onDataChange, onViewChange, offersModel, destinationsModel) => {
+  const groupedByDayPoints = getGroupedByDayPoints(points, sortType);
   const newPoints = [];
   let dayNumber = 0;
-  for (const day of Object.keys(groupedByDayEvents)) {
+  for (const day of Object.keys(groupedByDayPoints)) {
     dayNumber++;
     const dayComponent = new DayComponent(day, dayNumber);
-    render(eventListElement, dayComponent, RenderPosition.BEFOREEND);
+    render(eventList, dayComponent, RenderPosition.BEFOREEND);
     const dayPointsList = dayComponent.getElement().querySelector(`.trip-events__list`);
-    const dayPoints = groupedByDayEvents[day];
+    const dayPoints = groupedByDayPoints[day];
     dayPoints.map((point) => {
       const pointController = new PointController(dayPointsList, onDataChange, onViewChange, offersModel, destinationsModel);
       pointController.render(point, PointControllerMode.DEFAULT);
@@ -244,7 +245,6 @@ export default class TripController {
 
       this.resetSort();
       this.createPoint();
-
     });
   }
 }

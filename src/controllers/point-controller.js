@@ -24,10 +24,10 @@ export const EmptyPoint = {
   isFavorite: false,
 };
 
-const parseFormData = (editFormData, allOffersArr, destinationsArr) => {
+const parseFormData = (editFormData, allOffersFromServer, destinations) => {
 
-  const chosenTypesArr = editFormData.getAll(`event-type`);
-  const offersForThisType = getOffersForCurrentType(capitalizeFirstLetter(chosenTypesArr[0]), JSON.parse(JSON.stringify(allOffersArr)));
+  const chosenTypes = editFormData.getAll(`event-type`);
+  const offersForThisType = getOffersForCurrentType(capitalizeFirstLetter(chosenTypes[0]), JSON.parse(JSON.stringify(allOffersFromServer)));
 
   const getOffers = (formData, allOffers) => {
 
@@ -63,11 +63,11 @@ const parseFormData = (editFormData, allOffersArr, destinationsArr) => {
 
   const city = editFormData.get(`event-destination`);
 
-  const destination = destinationsArr.find((destinationItem) => (destinationItem.city === city));
+  const destination = destinations.find((destinationItem) => (destinationItem.city === city));
 
   return new PointModel({
     "id": editFormData.get(`pointId`),
-    "type": capitalizeFirstLetter(chosenTypesArr[0]),
+    "type": capitalizeFirstLetter(chosenTypes[0]),
     "destination": {
       name: city,
       description: destination.description,
