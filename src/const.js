@@ -6,4 +6,3 @@ export const FilterType = {
 
 export const TRANSFER_TYPES = [`Taxi`, `Bus`, `Train`, `Ship`, `Transport`, `Drive`, `Flight`];
 export const ACTIVITY_TYPES = [`Check-in`, `Sightseeing`, `Restaurant`];
-

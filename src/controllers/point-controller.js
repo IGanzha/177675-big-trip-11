@@ -61,13 +61,6 @@ const parseFormData = (editFormData, allOffersArr, destinationsArr) => {
     }
   };
 
-  const changeDateFormatForFormData = (dateString) => {
-    const monthIndex = dateString[3] + dateString[4];
-    const dayIndex = dateString[0] + dateString[1];
-
-    return monthIndex + `/` + dayIndex + dateString.slice(5);
-  };
-
   const city = editFormData.get(`event-destination`);
 
   const destination = destinationsArr.find((destinationItem) => (destinationItem.city === city));
@@ -80,8 +73,8 @@ const parseFormData = (editFormData, allOffersArr, destinationsArr) => {
       description: destination.description,
       pictures: destination.photos,
     },
-    "date_from": new Date(changeDateFormatForFormData(editFormData.get(`event-start-time`))),
-    "date_to": new Date(changeDateFormatForFormData(editFormData.get(`event-end-time`))),
+    "date_from": new Date(editFormData.get(`event-start-time`)),
+    "date_to": new Date(editFormData.get(`event-end-time`)),
     "base_price": editFormData.get(`event-price`),
     "offers": getOffers(editFormData, offersForThisType.offers),
     "is_favorite": (editFormData.get(`event-favorite`) === `on`) ? true : false,
@@ -116,8 +109,7 @@ export default class PointController {
       document.addEventListener(`keydown`, this._onEscKeyDown);
     });
 
-    this._eventEditComponent.setFavoritesButtonClickHandler((evt) => {
-      evt.preventDefault();
+    this._eventEditComponent.setFavoritesButtonClickHandler(() => {
       const newPoint = PointModel.clone(point);
       newPoint.isFavorite = !newPoint.isFavorite;
       this._onDataChange(this, point, newPoint);
@@ -125,12 +117,11 @@ export default class PointController {
 
     this._eventEditComponent.setSubmitHandler((evt) => {
       evt.preventDefault();
-
       const formData = this._eventEditComponent.getData();
       const data = parseFormData(formData, this._offersModel.getOffers(), this._destinationsModel.getDestinations());
-
       this._eventEditComponent.setData({
         saveButtonText: `Saving...`,
+        isFormDisabled: true,
       });
       this._onDataChange(this, point, data);
     });
@@ -138,8 +129,13 @@ export default class PointController {
     this._eventEditComponent.setDeleteButtonClickHandler(() => {
       this._eventEditComponent.setData({
         deleteButtonText: `Deleting...`,
+        isFormDisabled: true,
       });
       this._onDataChange(this, point, null);
+    });
+
+    this._eventEditComponent.setCloseEditFormButton(() => {
+      this._replaceEditToEvent();
     });
 
     switch (mode) {
@@ -179,9 +175,15 @@ export default class PointController {
     document.removeEventListener(`keydown`, this._onEscKeyDown);
   }
 
+  disableEditForm() {
+
+  }
+
   shake() {
     this._eventEditComponent.getElement().style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
     this._eventComponent.getElement().style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+
+    this._eventEditComponent.getElement().querySelector(`form.event--edit`).classList.add(`shake`);
 
     setTimeout(() => {
       this._eventEditComponent.getElement().style.animation = ``;
@@ -190,6 +192,7 @@ export default class PointController {
       this._eventEditComponent.setData({
         saveButtonText: `Save`,
         deleteButtonText: `Delete`,
+        isFormDisabled: false,
       });
     }, SHAKE_ANIMATION_TIMEOUT);
   }
@@ -206,7 +209,6 @@ export default class PointController {
     if (document.contains(this._eventEditComponent.getElement())) {
       replace(this._eventComponent, this._eventEditComponent);
     }
-
 
     this._mode = Mode.DEFAULT;
   }

@@ -12,27 +12,11 @@ const getRandomIntegerNumber = (min, max) => {
   return min + Math.floor(Math.random() * (max - min));
 };
 
-export const getTwoNumbersFormat = (number) => {
-  return String(number).padStart(2, `0`);
-};
-
-export const formatDate = (date) => {
-  return moment(date).format(`Y-MM-DD`);
-};
-
-export const formatDateForEdit = (date) => {
-  return moment(date).format(`DD/MM/YY`);
-};
-
-export const formatTime = (date) => {
-  return moment(date).format(`HH:mm`);
-};
-
 export const capitalizeFirstLetter = (string) => {
   return string[0].toUpperCase() + string.slice(1);
 };
 
-export const getFormattedTimeDuration = (startDate, endDate) => {
+export const getTimeDuration = (startDate, endDate) => {
 
   const difference = moment(endDate).diff(moment(startDate));
   const duration = moment.duration(difference);
@@ -49,10 +33,10 @@ export const getGroupedByDayPoints = (arr, sortType) => {
   const result = {};
   if (sortType === `events-up`) {
     arr.forEach((event) => {
-      if (result[formatDate(event.startDate)] === undefined) {
-        result[formatDate(event.startDate)] = [];
+      if (result[moment(event.startDate).format(`Y-MM-DD`)] === undefined) {
+        result[moment(event.startDate).format(`Y-MM-DD`)] = [];
       }
-      result[formatDate(event.startDate)].push(event);
+      result[moment(event.startDate).format(`Y-MM-DD`)].push(event);
     });
   } else {
     result[`noGroup`] = arr;
@@ -64,4 +48,3 @@ export const getGroupedByDayPoints = (arr, sortType) => {
 export const getOffersForCurrentType = (type, allOffers) => {
   return allOffers.find((offerObj) => (offerObj.type === type));
 };
-

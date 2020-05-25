@@ -6,10 +6,8 @@ import SortComponent, {SortType} from '../components/sort.js';
 import TripDaysSectionComponent from '../components/trip-days-section.js';
 
 import {FilterType} from '../const.js';
-import {render, RenderPosition} from '../utils/render.js';
 import {getGroupedByDayPoints} from '../utils/common.js';
-
-const resetFiltersEvent = new Event(`resetFilters`);
+import {render, RenderPosition} from '../utils/render.js';
 
 const renderPoints = (eventListElement, points, sortType, onDataChange, onViewChange, offersModel, destinationsModel) => {
   const groupedByDayEvents = getGroupedByDayPoints(points, sortType);
@@ -75,8 +73,9 @@ const getSortedPoints = (points, sortType) => {
 };
 
 export default class TripController {
-  constructor(container, pointsModel, api, offersModel, destinationsModel) {
+  constructor(container, filterController, pointsModel, api, offersModel, destinationsModel) {
     this._container = container;
+    this._filterController = filterController;
     this._pointsModel = pointsModel;
     this._api = api;
     this._offersModel = offersModel;
@@ -106,10 +105,12 @@ export default class TripController {
 
   hide() {
     this._container.classList.add(`visually-hidden`);
+    this._updatePoints();
   }
 
   show() {
     this._container.classList.remove(`visually-hidden`);
+    this._updatePoints();
   }
 
   render() {
@@ -145,10 +146,9 @@ export default class TripController {
       return;
     }
 
-    const daysListElement = document.querySelector(`.trip-events`);
+    const tripSortElement = document.querySelector(`.trip-sort`);
     const dayComponent = new DayComponent(`noGroup`, null);
-    render(daysListElement, dayComponent, RenderPosition.AFTERBEGIN);
-    // TODO: если есть форма сортировки, рендер после нее
+    render(tripSortElement, dayComponent, RenderPosition.AFTER);
     const dayPointsElement = dayComponent.getElement().querySelector(`.trip-events__list`);
     this._creatingPoint = new PointController(dayPointsElement, this._onDataChange, this._onViewChange, this._offersModel, this._destinationsModel);
     this._creatingPoint.render(EmptyPoint, PointControllerMode.ADDING);
@@ -167,6 +167,7 @@ export default class TripController {
   _updatePoints() {
     this._removePoints();
     this._renderPoints(this._pointsModel.getPoints());
+    this._filterController.disableEmptyFilters();
   }
 
   _onSortTypeChange(sortType) {
@@ -237,8 +238,8 @@ export default class TripController {
 
   _onCreateNewPoint() {
     this._addNewPointButton.addEventListener(`click`, () => {
-      document.dispatchEvent(resetFiltersEvent);
       this._pointsModel.setFilter(FilterType.ALL);
+      this._filterController.setDefaultView();
       this._addNewPointButton.disabled = true;
 
       this.resetSort();

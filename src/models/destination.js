@@ -12,5 +12,4 @@ export default class Destination {
   static parseDestinations(data) {
     return data.map(Destination.parseDestination);
   }
-
 }

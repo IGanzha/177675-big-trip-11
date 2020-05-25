@@ -1,25 +1,20 @@
 import AbstractSmartComponent from "./abstract-smart-component.js";
+import moment from 'moment';
 import {ACTIVITY_TYPES} from '../const.js';
-import {formatDate, formatTime, getFormattedTimeDuration} from '../utils/common.js';
+import {getTimeDuration} from '../utils/common.js';
 import {encode} from 'he';
-
 
 const CHOSEN_OFFERS_AMOUNT_TO_PREVIEW = 3;
 
 const createTimeMarkup = (start, end) => {
 
-  const startDay = formatDate(start);
-  const startTime = formatTime(start);
-  const endDay = formatDate(end);
-  const endTime = formatTime(end);
-
-  const eventDuration = getFormattedTimeDuration(start, end);
+  const eventDuration = getTimeDuration(start, end);
 
   return (
     `<p class="event__time">
-      <time class="event__start-time" datetime="${startDay}T${startTime}">${startTime}</time>
+      <time class="event__start-time" datetime="${moment(start).format(`Y-MM-DD[T]HH:mm`)}">${moment(start).format(`HH:mm`)}</time>
       &mdash;
-      <time class="event__end-time" datetime="${endDay}T${endTime}">${endTime}</time>
+      <time class="event__end-time" datetime="${moment(end).format(`Y-MM-DD[T]HH:mm`)}">${moment(end).format(`HH:mm`)}</time>
     </p>
     <p class="event__duration">${eventDuration}</p>
     `
