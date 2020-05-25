@@ -5,9 +5,7 @@ import OffersModel from './models/offers.js';
 import PointsModel from './models/points.js';
 import SiteMenuComponent, {MenuItem} from './components/menu.js';
 import StatisticsComponent from './components/statistics.js';
-import TotalPriceComponent from './components/total-price.js';
 import TripController from './controllers/trip-controller.js';
-import TripInfoComponent from './components/trip-info.js';
 
 import {render, RenderPosition} from './utils/render.js';
 
@@ -20,10 +18,6 @@ const offersModel = new OffersModel();
 const destinationsModel = new DestinationsModel();
 
 const tripMainElement = document.querySelector(`.trip-main`);
-render(tripMainElement, new TripInfoComponent(), RenderPosition.AFTERBEGIN);
-
-const tripInfoElement = document.querySelector(`.trip-info`);
-render(tripInfoElement, new TotalPriceComponent(), RenderPosition.BEFOREEND);
 
 const siteMenuComponent = new SiteMenuComponent();
 
@@ -34,9 +28,8 @@ render(menuHeaderElement, siteMenuComponent, RenderPosition.AFTER);
 const tripEventsSection = document.querySelector(`.trip-events`);
 
 const filterController = new FilterController(tripControlsElement, pointsModel);
-filterController.render();
 
-const tripController = new TripController(tripEventsSection, pointsModel, api, offersModel, destinationsModel);
+const tripController = new TripController(tripEventsSection, filterController, pointsModel, api, offersModel, destinationsModel);
 
 const statisticsComponent = new StatisticsComponent(pointsModel);
 const pageBodyContainer = document.querySelector(`main .page-body__container`);
@@ -69,4 +62,5 @@ api.getOffers()
   .then((points) => {
     pointsModel.setPoints(points);
     tripController.render();
+    filterController.render();
   });

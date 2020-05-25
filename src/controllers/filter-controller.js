@@ -1,6 +1,8 @@
 import FilterComponent from '../components/filter.js';
 import {FilterType} from '../const.js';
+import {getPointsByFilter} from '../utils/filter.js';
 import {render, replace, RenderPosition} from '../utils/render.js';
+
 
 export default class FilterController {
   constructor(container, pointsModel) {
@@ -28,13 +30,29 @@ export default class FilterController {
 
     this._filterComponent = new FilterComponent(filters);
     this._filterComponent.setFilterChangeHandler(this._onFilterChange);
-    this._filterComponent.setDefaultViewHandler();
+
+    this.disableEmptyFilters();
 
     if (oldComponent) {
       replace(this._filterComponent, oldComponent);
     } else {
       render(container, this._filterComponent, RenderPosition.BEFOREEND);
     }
+  }
+
+  setDefaultView() {
+    this._filterComponent.setDefaultView();
+  }
+
+  disableEmptyFilters() {
+    Object.values(FilterType).map((filter) => {
+      const filteredPoints = getPointsByFilter(this._pointsModel.getAllPoints(), filter);
+      if (filteredPoints.length === 0) {
+        this._filterComponent.disableEmptyFilter(filter, true);
+      } else {
+        this._filterComponent.disableEmptyFilter(filter, false);
+      }
+    });
   }
 
   _onFilterChange(filterType) {

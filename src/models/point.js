@@ -5,6 +5,8 @@ export default class Point {
     this.id = data[`id`];
     this.type = capitalizeFirstLetter(data[`type`]);
     this.startDate = new Date(data[`date_from`]);
+
+
     this.endDate = new Date(data[`date_to`]);
     this.price = data[`base_price`];
     this.city = data[`destination`][`name`];
@@ -22,7 +24,6 @@ export default class Point {
 
   toRAW() {
     return {
-
       "id": this.id,
       "type": this.type.toLowerCase(),
       "date_from": this.startDate.toISOString(),

@@ -1,5 +1,5 @@
-import {getPointsByFilter} from '../utils/filter.js';
 import {FilterType} from '../const.js';
+import {getPointsByFilter} from '../utils/filter.js';
 
 export default class Points {
   constructor() {
@@ -14,9 +14,9 @@ export default class Points {
     return getPointsByFilter(this._points, this._activeFilterType);
   }
 
-  // getAllPoints() {
-  //   return this._points;
-  // }
+  getAllPoints() {
+    return this._points;
+  }
 
   setPoints(points) {
     this._points = Array.from(points);
@@ -28,6 +28,11 @@ export default class Points {
     this._activeFilterType = filterType;
     this._callHandlers(this._filterChangeHandlers);
   }
+
+  getActiveFilter() {
+    return this._activeFilterType;
+  }
+
 
   updatePoint(id, point) {
     const index = this._points.findIndex((tripEvent) => tripEvent.id === id);
