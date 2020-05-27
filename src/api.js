@@ -1,11 +1,11 @@
 import Destination from './models/destination.js';
 import Offer from './models/offer.js';
 import Point from './models/point.js';
-import {Method} from './const.js';
+import {Method, ResponseCode} from './const.js';
 
 
 const checkStatus = (response) => {
-  if (response.status >= 200 && response.status < 300) {
+  if (response.status >= ResponseCode.SUCCESS && response.status < ResponseCode.REDIRECTION) {
     return response;
   } else {
     throw new Error(`${response.status}: ${response.statusText}`);
@@ -67,9 +67,6 @@ export default class API {
     headers.append(`Authorization`, this._authorization);
 
     return fetch(`${this._endPoint}/${url}`, {method, body, headers})
-      .then(checkStatus)
-      .catch((err) => {
-        throw err;
-      });
+      .then(checkStatus);
   }
 }

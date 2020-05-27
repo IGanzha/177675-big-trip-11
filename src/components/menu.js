@@ -1,11 +1,6 @@
-import AbstractComponent from "./abstract-component.js";
+import AbstractComponent from './abstract-component.js';
 
 const ACTIVE_TAB_CLASS = `trip-tabs__btn--active`;
-
-export const MenuItem = {
-  STATISTICS: `control-stats`,
-  TABLE: `control-table`,
-};
 
 const createSiteMenuTemplate = () => {
   return (
@@ -40,8 +35,7 @@ export default class SiteMenu extends AbstractComponent {
         return;
       }
       evt.preventDefault();
-      const menuItem = evt.target.id;
-      handler(menuItem);
+      handler(evt.target.id);
     });
   }
 }

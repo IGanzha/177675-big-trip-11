@@ -3,20 +3,17 @@ import FilterController from './controllers/filter-controller.js';
 import DestinationsModel from './models/destinations.js';
 import OffersModel from './models/offers.js';
 import PointsModel from './models/points.js';
-import SiteMenuComponent, {MenuItem} from './components/menu.js';
+import SiteMenuComponent from './components/menu.js';
 import StatisticsComponent from './components/statistics.js';
 import TripController from './controllers/trip-controller.js';
-import {render, RenderPosition} from './utils/render.js';
-
-const AUTHORIZATION = `Basic randomString123`;
-const END_POINT = `https://11.ecmascript.pages.academy/big-trip`;
+import {render} from './utils/render.js';
+import {AUTHORIZATION, END_POINT, RenderPosition, MenuItem} from './const.js';
 
 const tripMainElement = document.querySelector(`.trip-main`);
 const tripControlsElement = tripMainElement.querySelector(`.trip-controls`);
 const menuHeaderElement = tripControlsElement.querySelector(`h2`);
-const tripEventsSection = document.querySelector(`.trip-events`);
-const pageBodyContainer = document.querySelector(`main .page-body__container`);
-
+const tripEventsSectionElement = document.querySelector(`.trip-events`);
+const pageBodyContainerElement = document.querySelector(`main .page-body__container`);
 
 const api = new API(END_POINT, AUTHORIZATION);
 const pointsModel = new PointsModel();
@@ -26,10 +23,10 @@ const destinationsModel = new DestinationsModel();
 const siteMenuComponent = new SiteMenuComponent();
 render(menuHeaderElement, siteMenuComponent, RenderPosition.AFTER);
 const filterController = new FilterController(tripControlsElement, pointsModel);
-const tripController = new TripController(tripEventsSection, filterController, pointsModel, api, offersModel, destinationsModel);
+const tripController = new TripController(tripEventsSectionElement, filterController, pointsModel, api, offersModel, destinationsModel);
 const statisticsComponent = new StatisticsComponent(pointsModel);
 
-render(pageBodyContainer, statisticsComponent, RenderPosition.BEFOREEND);
+render(pageBodyContainerElement, statisticsComponent, RenderPosition.BEFOREEND);
 statisticsComponent.hide();
 
 siteMenuComponent.setOnChange((menuItem) => {
@@ -47,16 +44,13 @@ siteMenuComponent.setOnChange((menuItem) => {
   }
 });
 
-api.getOffers()
-  .then((offers) => {
-    offersModel.setOffers(offers);
-    return api.getDestinations();
-  }).then((destinations) => {
-    destinationsModel.setDestinations(destinations);
-    return api.getPoints();
-  })
-  .then((points) => {
-    pointsModel.setPoints(points);
-    tripController.render();
-    filterController.render();
-  });
+Promise.all([
+  api.getOffers(),
+  api.getDestinations(),
+  api.getPoints()
+]).then((res) => {
+  offersModel.setOffers(res[0]);
+  destinationsModel.setDestinations(res[1]);
+  pointsModel.setPoints(res[2]);
+  tripController.render();
+});

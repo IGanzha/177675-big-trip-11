@@ -2,9 +2,8 @@ import EventComponent from '../components/event.js';
 import EventEditComponent from '../components/event-edit.js';
 import PointModel from '../models/point.js';
 import {capitalizeFirstLetter, getOffersForCurrentType} from '../utils/common.js';
-import {render, replace, remove, RenderPosition} from '../utils/render.js';
-
-const SHAKE_ANIMATION_TIMEOUT = 600;
+import {render, replace, remove} from '../utils/render.js';
+import {RenderPosition, SHAKE_ANIMATION_TIMEOUT} from '../const.js';
 
 export const Mode = {
   ADDING: `adding`,
@@ -56,7 +55,6 @@ const parseFormData = (editFormData, allOffersFromServer, destinations) => {
           }
         });
       });
-
       return chosenOffers;
     }
   };
@@ -66,18 +64,18 @@ const parseFormData = (editFormData, allOffersFromServer, destinations) => {
   const destination = destinations.find((destinationItem) => (destinationItem.city === city));
 
   return new PointModel({
-    "id": editFormData.get(`pointId`),
-    "type": capitalizeFirstLetter(chosenTypes[0]),
-    "destination": {
+    'id': editFormData.get(`pointId`),
+    'type': capitalizeFirstLetter(chosenTypes[0]),
+    'destination': {
       name: city,
       description: destination.description,
       pictures: destination.photos,
     },
-    "date_from": new Date(editFormData.get(`event-start-time`)),
-    "date_to": new Date(editFormData.get(`event-end-time`)),
-    "base_price": editFormData.get(`event-price`),
-    "offers": getOffers(editFormData, offersForThisType.offers),
-    "is_favorite": (editFormData.get(`event-favorite`) === `on`) ? true : false,
+    'date_from': new Date(editFormData.get(`event-start-time`)),
+    'date_to': new Date(editFormData.get(`event-end-time`)),
+    'base_price': editFormData.get(`event-price`),
+    'offers': getOffers(editFormData, offersForThisType.offers),
+    'is_favorite': (editFormData.get(`event-favorite`) === `on`),
   });
 };
 
@@ -173,10 +171,6 @@ export default class PointController {
     remove(this._eventEditComponent);
     remove(this._eventComponent);
     document.removeEventListener(`keydown`, this._onEscKeyDown);
-  }
-
-  disableEditForm() {
-
   }
 
   shake() {

@@ -1,7 +1,7 @@
 import FilterComponent from '../components/filter.js';
-import {FilterType} from '../const.js';
+import {FilterType, RenderPosition} from '../const.js';
 import {getPointsByFilter} from '../utils/filter.js';
-import {render, replace, RenderPosition} from '../utils/render.js';
+import {render, replace} from '../utils/render.js';
 
 
 export default class FilterController {
@@ -12,10 +12,7 @@ export default class FilterController {
     this._activeFilterType = FilterType.ALL;
     this._filterComponent = null;
 
-    this._onDataChange = this._onDataChange.bind(this);
-    this._onFilterChange = this._onFilterChange.bind(this);
-
-    this._pointsModel.setDataChangeHandler(this._onDataChange);
+    this._pointsModel.setDataChangeHandler(this._onDataChange.bind(this));
   }
 
   render() {
@@ -29,7 +26,7 @@ export default class FilterController {
     const oldComponent = this._filterComponent;
 
     this._filterComponent = new FilterComponent(filters);
-    this._filterComponent.setFilterChangeHandler(this._onFilterChange);
+    this._filterComponent.setFilterChangeHandler(this._onFilterChange.bind(this));
 
     this.disableEmptyFilters();
 
@@ -47,11 +44,7 @@ export default class FilterController {
   disableEmptyFilters() {
     Object.values(FilterType).map((filter) => {
       const filteredPoints = getPointsByFilter(this._pointsModel.getAllPoints(), filter);
-      if (filteredPoints.length === 0) {
-        this._filterComponent.disableEmptyFilter(filter, true);
-      } else {
-        this._filterComponent.disableEmptyFilter(filter, false);
-      }
+      this._filterComponent.disableEmptyFilter(filter, filteredPoints.length === 0);
     });
   }
 

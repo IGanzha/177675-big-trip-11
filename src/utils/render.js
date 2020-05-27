@@ -1,9 +1,4 @@
-const RenderPosition = {
-  AFTERBEGIN: `afterbegin`,
-  BEFOREEND: `beforeend`,
-  AFTER: `after`,
-  BEFORE: `before`
-};
+import {RenderPosition} from '../const.js';
 
 const createElement = (template) => {
   const newElement = document.createElement(`div`);
@@ -46,4 +41,4 @@ const render = (container, component, place) => {
   }
 };
 
-export {RenderPosition, createElement, replace, remove, render};
+export {createElement, replace, remove, render};

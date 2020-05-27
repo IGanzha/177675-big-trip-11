@@ -29,11 +29,6 @@ export default class Points {
     this._callHandlers(this._filterChangeHandlers);
   }
 
-  getActiveFilter() {
-    return this._activeFilterType;
-  }
-
-
   updatePoint(id, point) {
     const index = this._points.findIndex((tripEvent) => tripEvent.id === id);
     if (index === -1) {

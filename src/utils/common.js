@@ -1,6 +1,5 @@
 import moment from 'moment';
-
-const HOURS_IN_DAY = 24;
+import {HOURS_IN_DAY, MomentFormat} from '../const.js';
 
 const getRandomArrayItem = (array) => {
   const randomIndex = getRandomIntegerNumber(0, array.length);
@@ -32,10 +31,10 @@ const getGroupedByDayPoints = (points, sortType) => {
   const result = {};
   if (sortType === `events-up`) {
     points.forEach((point) => {
-      if (result[moment(point.startDate).format(`Y-MM-DD`)] === undefined) {
-        result[moment(point.startDate).format(`Y-MM-DD`)] = [];
+      if (result[moment(point.startDate).format(MomentFormat.DAY)] === undefined) {
+        result[moment(point.startDate).format(MomentFormat.DAY)] = [];
       }
-      result[moment(point.startDate).format(`Y-MM-DD`)].push(point);
+      result[moment(point.startDate).format(MomentFormat.DAY)].push(point);
     });
   } else {
     result[`noGroup`] = points;

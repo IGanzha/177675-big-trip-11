@@ -3,7 +3,7 @@ import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 import moment from 'moment';
 
-import {ACTIVITY_TYPES, TRANSFER_TYPES} from '../const.js';
+import {ACTIVITY_TYPES, TRANSFER_TYPES, MomentFormat, flatpickrConfig} from '../const.js';
 import {encode} from 'he';
 import {capitalizeFirstLetter, getRandomArrayItem, getOffersForCurrentType} from '../utils/common.js';
 
@@ -40,6 +40,7 @@ const getFinalOffers = (allOffers, chosenOffers) => {
         offerAll.isChecked = false;
       }
     }
+
     finalOffers.push(offerAll);
   });
 
@@ -211,12 +212,12 @@ const createEventEditTemplate = (point, options = {}, offersList, destinationsLi
             <label class="visually-hidden" for="event-start-time-${id}">
               From
             </label>
-            <input class="event__input  event__input--time" id="event-start-time-${id}" type="text" name="event-start-time" value="${moment(startDate).format(`DD/MM/YY HH:mm`)}">
+            <input class="event__input  event__input--time" id="event-start-time-${id}" type="text" name="event-start-time" value="${moment(startDate).format(MomentFormat.EDIT)}">
             &mdash;
             <label class="visually-hidden" for="event-end-time-${id}">
               To
             </label>
-            <input class="event__input  event__input--time" id="event-end-time-${id}" type="text" name="event-end-time" value="${moment(endDate).format(`DD/MM/YY HH:mm`)}">
+            <input class="event__input  event__input--time" id="event-end-time-${id}" type="text" name="event-end-time" value="${moment(endDate).format(MomentFormat.EDIT)}">
           </div>
 
           <div class="event__field-group  event__field-group--price">
@@ -262,7 +263,6 @@ export default class EventEdit extends AbstractSmartComponent {
     this._externalData = DefaultData;
 
     this._submitHandler = null;
-    this._typeInputClickHandler = null;
     this._favoriteButtonClickHandler = null;
     this._deleteButtonClickHandler = null;
     this._closeEditFormButtonHandler = null;
@@ -336,12 +336,6 @@ export default class EventEdit extends AbstractSmartComponent {
     this._favoriteButtonClickHandler = handler;
   }
 
-  setTypeInputClickHandler(handler) {
-    this.getElement().querySelector(`.event__type-btn`)
-      .addEventListener(`click`, handler);
-    this._typeInputClickHandler = handler;
-  }
-
   setDeleteButtonClickHandler(handler) {
     this.getElement().querySelector(`.event__reset-btn`)
       .addEventListener(`click`, handler);
@@ -383,13 +377,18 @@ export default class EventEdit extends AbstractSmartComponent {
 
     const destinationCityInput = element.querySelector(`.event__input--destination`);
     destinationCityInput.addEventListener(`change`, () => {
-      this._currentCity = capitalizeFirstLetter(destinationCityInput.value);
-      const destination = this._destinationsModel.getDestinations().find((destinationItem) => (destinationItem.city === this._currentCity));
-      this._point.destination = {
-        description: destination.description,
-        photos: destination.photos,
-      };
+      if (destinationCityInput.value) {
+        this._currentCity = capitalizeFirstLetter(destinationCityInput.value);
+        const destination = this._destinationsModel.getDestinations().find((destinationItem) => (destinationItem.city === this._currentCity));
+        this._point.destination = {
+          description: destination.description,
+          photos: destination.photos,
+        };
+      } else {
+        this._point.destination = {};
+      }
       this.rerender();
+      this._point.destination = {};
     });
   }
 
@@ -408,29 +407,21 @@ export default class EventEdit extends AbstractSmartComponent {
     const startDateInput = dateElements[0];
     const endDateInput = dateElements[1];
 
-    this._startDateFlatpickr = flatpickr(startDateInput, {
-      enableTime: true,
-      altFormat: `d/m/y H:i`,
-      altInput: true,
-      allowInput: true,
+    this._startDateFlatpickr = flatpickr(startDateInput, Object.assign({}, flatpickrConfig, {
       defaultDate: this._point.startDate || `today`,
       onClose: (selectedDates, dateStr) => {
         this._point.startDate = dateStr;
         this._endDateFlatpickr.set(`minDate`, dateStr);
         this._endDateFlatpickr.open();
       },
-    });
+    }));
 
-    this._endDateFlatpickr = flatpickr(endDateInput, {
-      enableTime: true,
+    this._endDateFlatpickr = flatpickr(endDateInput, Object.assign({}, flatpickrConfig, {
       minDate: startDateInput.value,
-      altFormat: `d/m/y H:i`,
-      altInput: true,
-      allowInput: true,
       defaultDate: this._point.endDate || `today`,
       onClose: (selectedDates, dateStr) => {
         this._point.endDate = dateStr;
       },
-    });
+    }));
   }
 }

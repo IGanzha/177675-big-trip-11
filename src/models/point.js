@@ -5,8 +5,6 @@ export default class Point {
     this.id = data[`id`];
     this.type = capitalizeFirstLetter(data[`type`]);
     this.startDate = new Date(data[`date_from`]);
-
-
     this.endDate = new Date(data[`date_to`]);
     this.price = data[`base_price`];
     this.city = data[`destination`][`name`];
@@ -24,18 +22,17 @@ export default class Point {
 
   toRAW() {
     return {
-
-      "id": this.id,
-      "type": this.type.toLowerCase(),
-      "date_from": this.startDate.toISOString(),
-      "date_to": this.endDate.toISOString(),
-      "base_price": +this.price,
-      "is_favorite": this.isFavorite,
-      "offers": this.chosenOffers,
-      "destination": {
-        "name": this.city,
-        "description": this.destination.description,
-        "pictures": this.destination.photos,
+      'id': this.id,
+      'type': this.type.toLowerCase(),
+      'date_from': this.startDate,
+      'date_to': this.endDate,
+      'base_price': +this.price,
+      'is_favorite': this.isFavorite,
+      'offers': this.chosenOffers,
+      'destination': {
+        'name': this.city,
+        'description': this.destination.description,
+        'pictures': this.destination.photos,
       },
     };
   }

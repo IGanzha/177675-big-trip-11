@@ -50,11 +50,6 @@ export default class Filter extends AbstractComponent {
   disableEmptyFilter(filterName, isDisabled) {
     const item = this.getElement().querySelector(`#filter-${filterName}`);
     item.disabled = isDisabled;
-    if (isDisabled) {
-      item.parentNode.querySelector(`.trip-filters__filter-label`).style = `pointer-events: none; cursor: default;`;
-    } else {
-      item.parentNode.querySelector(`.trip-filters__filter-label`).style = ``;
-    }
   }
 }
 
