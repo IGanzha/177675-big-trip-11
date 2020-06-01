@@ -7,17 +7,17 @@ import {CHART_BAR_HEIGHT, TRANSFER_TYPES} from '../const.js';
 const ChartName = {
   TRANSPORT: `TRANSPORT`,
   TIME: `TIME`,
-  MONEY: `MONEY'`,
+  MONEY: `MONEY`,
 };
 
 const getUniqTypes = (points) => {
-  const typesArr = [];
+  const types = [];
   points.forEach((point) => {
-    if (!typesArr.includes(point.type)) {
-      typesArr.push(point.type);
+    if (!types.includes(point.type)) {
+      types.push(point.type);
     }
   });
-  return typesArr;
+  return types;
 };
 
 const getTimeChartData = (points) => {
@@ -41,7 +41,7 @@ const getTimeChartData = (points) => {
 
   return {
     labels: types,
-    data: time,
+    values: time,
   };
 };
 
@@ -60,7 +60,7 @@ const getTransportChartData = (points) => {
 
   return {
     labels: transportTypes,
-    data: transportCountOnTypes,
+    values: transportCountOnTypes,
   };
 };
 
@@ -79,7 +79,7 @@ const getMoneyChartData = (points) => {
 
   return {
     labels: types,
-    data: moneySpentOnTypes,
+    values: moneySpentOnTypes,
   };
 };
 
@@ -91,7 +91,7 @@ const renderChart = (ctxElement, chartName, chartData, formatter) => {
     data: {
       labels: chartData.labels,
       datasets: [{
-        data: chartData.data,
+        data: chartData.values,
         backgroundColor: `#ffffff`,
         hoverBackgroundColor: `#ffffff`,
         anchor: `start`,

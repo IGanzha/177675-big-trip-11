@@ -5,7 +5,6 @@ export default class Offers {
 
   getOffers() {
     return this._offers;
-
   }
 
   setOffers(offers) {

@@ -31,10 +31,10 @@ const getGroupedByDayPoints = (points, sortType) => {
   const result = {};
   if (sortType === `events-up`) {
     points.forEach((point) => {
-      if (result[moment(point.startDate).format(MomentFormat.DAY)] === undefined) {
-        result[moment(point.startDate).format(MomentFormat.DAY)] = [];
+      if (result[moment(point.startDate).format(MomentFormat.YEAR_MONTH_DAY)] === undefined) {
+        result[moment(point.startDate).format(MomentFormat.YEAR_MONTH_DAY)] = [];
       }
-      result[moment(point.startDate).format(MomentFormat.DAY)].push(point);
+      result[moment(point.startDate).format(MomentFormat.YEAR_MONTH_DAY)].push(point);
     });
   } else {
     result[`noGroup`] = points;

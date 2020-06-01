@@ -3,7 +3,7 @@ import FilterController from './controllers/filter-controller.js';
 import DestinationsModel from './models/destinations.js';
 import OffersModel from './models/offers.js';
 import PointsModel from './models/points.js';
-import SiteMenuComponent from './components/menu.js';
+import SiteMenuComponent from './components/site-menu.js';
 import StatisticsComponent from './components/statistics.js';
 import TripController from './controllers/trip-controller.js';
 import {render} from './utils/render.js';
@@ -34,6 +34,7 @@ siteMenuComponent.setOnChange((menuItem) => {
     case MenuItem.STATISTICS:
       siteMenuComponent.setActiveItem(MenuItem.STATISTICS);
       tripController.hide();
+      tripController.enableAddNewPointButton();
       statisticsComponent.show();
       break;
     case MenuItem.TABLE:
@@ -42,6 +43,12 @@ siteMenuComponent.setOnChange((menuItem) => {
       tripController.show();
       break;
   }
+});
+
+document.addEventListener(`addNewPointButtonClick`, () => {
+  siteMenuComponent.setActiveItem(MenuItem.TABLE);
+  statisticsComponent.hide();
+  tripController.show();
 });
 
 Promise.all([

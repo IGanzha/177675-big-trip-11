@@ -20,11 +20,11 @@ export default class SiteMenu extends AbstractComponent {
 
   setActiveItem(selectedTab) {
     this.getElement().querySelectorAll(`.trip-tabs__btn`)
-      .forEach((it) => {
-        if (it.id === selectedTab) {
-          it.classList.add(ACTIVE_TAB_CLASS);
+      .forEach((tab) => {
+        if (tab.id === selectedTab) {
+          tab.classList.add(ACTIVE_TAB_CLASS);
         } else {
-          it.classList.remove(ACTIVE_TAB_CLASS);
+          tab.classList.remove(ACTIVE_TAB_CLASS);
         }
       });
   }

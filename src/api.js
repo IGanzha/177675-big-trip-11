@@ -24,11 +24,11 @@ export default class API {
       .then(Point.parsePoints);
   }
 
-  updatePoint(id, data) {
+  updatePoint(id, newPointData) {
     return this._load({
       url: `points/${id}`,
       method: Method.PUT,
-      body: JSON.stringify(data.toRAW()),
+      body: JSON.stringify(newPointData.toRAW()),
       headers: new Headers({"Content-Type": `application/json`})
     })
       .then((response) => response.json())
@@ -57,7 +57,6 @@ export default class API {
   }
 
   getOffers() {
-
     return this._load({url: `offers`})
       .then((response) => response.json())
       .then(Offer.parseOffers);

@@ -5,7 +5,7 @@ import moment from 'moment';
 
 import {ACTIVITY_TYPES, TRANSFER_TYPES, MomentFormat, flatpickrConfig} from '../const.js';
 import {encode} from 'he';
-import {capitalizeFirstLetter, getRandomArrayItem, getOffersForCurrentType} from '../utils/common.js';
+import {getOffersForCurrentType} from '../utils/common.js';
 
 const DefaultData = {
   deleteButtonText: `Delete`,
@@ -131,11 +131,7 @@ const createDestinationMarkup = (destination) => {
 };
 
 const createResetButton = (point, buttonsText) => {
-  if (point.id !== `new`) {
-    return `<button class="event__reset-btn" type="reset">${buttonsText.deleteButtonText}</button>`;
-  } else {
-    return `<button class="event__reset-btn" type="reset">Cancel</button>`;
-  }
+  return `<button class="event__reset-btn" type="reset">${(point.id !== `new`) ? buttonsText.deleteButtonText : `Cancel`}</button>`;
 };
 
 const createRollUpButton = (point) => {
@@ -148,7 +144,6 @@ const createRollUpButton = (point) => {
 const createEventEditTemplate = (point, options = {}, offersList, destinationsList) => {
   const {type, chosenOffers, startDate, endDate, price, destination, id} = point;
   const {currentCity, externalData} = options;
-
   const offersForCurrentType = getOffersForCurrentType(type, JSON.parse(JSON.stringify(offersList)));
   const offers = getFinalOffers(offersForCurrentType.offers, JSON.parse(JSON.stringify(chosenOffers)));
 
@@ -266,8 +261,8 @@ export default class EventEdit extends AbstractSmartComponent {
     this._favoriteButtonClickHandler = null;
     this._deleteButtonClickHandler = null;
     this._closeEditFormButtonHandler = null;
-
-    this._subscribeOnEvents();
+    this._changeTypeHandler = null;
+    this._changeDestinationHandler = null;
 
     this._startDateFlatpickr = null;
     this._endDateFlatpickr = null;
@@ -275,18 +270,18 @@ export default class EventEdit extends AbstractSmartComponent {
   }
 
   getTemplate() {
-    return createEventEditTemplate(this._point, {currentCity: this._currentCity, externalData: this._externalData}, this._offersModel.getOffers(), this._destinationsModel.getDestinations());
+    return createEventEditTemplate(this._point, {currentCity: this._point.city, externalData: this._externalData}, this._offersModel.getOffers(), this._destinationsModel.getDestinations());
   }
 
   getData() {
     const form = this.getElement().querySelector(`.event--edit`);
     const formData = new FormData(form);
-    formData.append(`pointId`, this._id);
+    formData.append(`pointId`, this._point.id);
     return formData;
   }
 
-  setData(data) {
-    this._externalData = Object.assign({}, DefaultData, data);
+  setData(newData) {
+    this._externalData = Object.assign({}, DefaultData, newData);
     this.rerender();
     this._disableForm();
   }
@@ -296,9 +291,9 @@ export default class EventEdit extends AbstractSmartComponent {
     this._applyFlatpickr();
   }
 
-  reset() {
-    const point = this._point;
-    this._currentCity = point.city;
+  reset(sourcePoint) {
+    this._point = sourcePoint;
+    this._currentCity = this._point.city;
     this.rerender();
   }
 
@@ -321,7 +316,8 @@ export default class EventEdit extends AbstractSmartComponent {
     this.setFavoritesButtonClickHandler(this._favoriteButtonClickHandler);
     this.setDeleteButtonClickHandler(this._deleteButtonClickHandler);
     this.setCloseEditFormButton(this._closeEditFormButtonHandler);
-    this._subscribeOnEvents();
+    this.setChangeTypeHandler(this._changeTypeHandler);
+    this.setChangeDestinationHandler(this._changeDestinationHandler);
   }
 
   setSubmitHandler(handler) {
@@ -350,45 +346,23 @@ export default class EventEdit extends AbstractSmartComponent {
     }
   }
 
+  setChangeTypeHandler(handler) {
+    const typeLabels = this.getElement().querySelectorAll(`.event__type-label`);
+    typeLabels.forEach((label) => {
+      label.addEventListener(`click`, handler);
+    });
+    this._changeTypeHandler = handler;
+  }
+
+  setChangeDestinationHandler(handler) {
+    this.getElement().querySelector(`.event__input--destination`)
+      .addEventListener(`change`, handler);
+    this._changeDestinationHandler = handler;
+  }
+
   _disableForm() {
     this.getElement().querySelectorAll(`input, button`).forEach((element) => {
       element.disabled = this._externalData.isFormDisabled;
-    });
-  }
-
-  _subscribeOnEvents() {
-    const element = this.getElement();
-
-    const typeLabels = element.querySelectorAll(`.event__type-label`);
-    typeLabels.forEach((label) => {
-      label.addEventListener(`click`, (evt) => {
-        const type = evt.target.parentNode.querySelector(`.event__type-input`).value;
-        this._point.type = capitalizeFirstLetter(type);
-        const randomDestination = getRandomArrayItem(this._destinationsModel.getDestinations());
-        this._currentCity = randomDestination.city;
-        this._point.destination = {
-          description: randomDestination.description,
-          photos: randomDestination.photos,
-        };
-        this.rerender();
-        this._point.destination = {};
-      });
-    });
-
-    const destinationCityInput = element.querySelector(`.event__input--destination`);
-    destinationCityInput.addEventListener(`change`, () => {
-      if (destinationCityInput.value) {
-        this._currentCity = capitalizeFirstLetter(destinationCityInput.value);
-        const destination = this._destinationsModel.getDestinations().find((destinationItem) => (destinationItem.city === this._currentCity));
-        this._point.destination = {
-          description: destination.description,
-          photos: destination.photos,
-        };
-      } else {
-        this._point.destination = {};
-      }
-      this.rerender();
-      this._point.destination = {};
     });
   }
 

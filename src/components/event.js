@@ -89,6 +89,7 @@ export default class Event extends AbstractSmartComponent {
   }
 
   setEditButtonClickHandler(handler) {
+
     this.getElement().querySelector(`.event__rollup-btn`)
       .addEventListener(`click`, handler);
   }

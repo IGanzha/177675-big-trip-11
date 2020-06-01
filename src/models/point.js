@@ -1,20 +1,20 @@
 import {capitalizeFirstLetter} from '../utils/common.js';
 
 export default class Point {
-  constructor(data) {
-    this.id = data[`id`];
-    this.type = capitalizeFirstLetter(data[`type`]);
-    this.startDate = new Date(data[`date_from`]);
-    this.endDate = new Date(data[`date_to`]);
-    this.price = data[`base_price`];
-    this.city = data[`destination`][`name`];
-    this.isFavorite = Boolean(data[`is_favorite`]);
+  constructor(pointData) {
+    this.id = pointData[`id`];
+    this.type = capitalizeFirstLetter(pointData[`type`]);
+    this.startDate = new Date(pointData[`date_from`]);
+    this.endDate = new Date(pointData[`date_to`]);
+    this.price = pointData[`base_price`];
+    this.city = pointData[`destination`][`name`];
+    this.isFavorite = Boolean(pointData[`is_favorite`]);
     this.destination = {};
-    this.destination.description = data[`destination`][`description`] || ``;
+    this.destination.description = pointData[`destination`][`description`] || ``;
 
-    this.destination.photos = data[`destination`][`pictures`] || ``;
+    this.destination.photos = pointData[`destination`][`pictures`] || ``;
 
-    this.chosenOffers = data[`offers`] || ``;
+    this.chosenOffers = pointData[`offers`] || ``;
     this.chosenOffers.map((chosenOffer) => {
       chosenOffer.isChecked = true;
     });
@@ -37,15 +37,15 @@ export default class Point {
     };
   }
 
-  static parsePoint(data) {
-    return new Point(data);
+  static parsePoint(point) {
+    return new Point(point);
   }
 
-  static parsePoints(data) {
-    return data.map(Point.parsePoint);
+  static parsePoints(points) {
+    return points.map(Point.parsePoint);
   }
 
-  static clone(data) {
-    return new Point(data.toRAW());
+  static clone(pointData) {
+    return new Point(pointData.toRAW());
   }
 }

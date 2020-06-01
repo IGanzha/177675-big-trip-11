@@ -35,10 +35,12 @@ const Method = {
 };
 
 const MomentFormat = {
-  DAY: `Y-MM-DD`,
+  YEAR_MONTH_DAY: `Y-MM-DD`,
   DATETIME: `Y-MM-DD[T]HH:mm`,
   EDIT: `DD/MM/YY HH:mm`,
   TIME: `HH:mm`,
+  MONTH: `MMM`,
+  DAY: `DD`,
 };
 
 const RenderPosition = {

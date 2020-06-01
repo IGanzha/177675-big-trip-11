@@ -1,10 +1,11 @@
 import AbstractComponent from "./abstract-component.js";
 import moment from 'moment';
+import {MomentFormat} from '../const.js';
 
 
 const createDayTemplate = (date, dayIndex) => {
-  const month = moment(date).format(`MMM`);
-  const day = moment(date).format(`DD`);
+  const month = moment(date).format(MomentFormat.MONTH);
+  const day = moment(date).format(MomentFormat.DAY);
 
   const dayInfoMarkup = (date === `noGroup`) ? `` : (
     `<span class="day__counter">${dayIndex}</span>
