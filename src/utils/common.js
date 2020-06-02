@@ -1,15 +1,6 @@
 import moment from 'moment';
 import {HOURS_IN_DAY, MomentFormat} from '../const.js';
 
-const getRandomArrayItem = (array) => {
-  const randomIndex = getRandomIntegerNumber(0, array.length);
-  return array[randomIndex];
-};
-
-const getRandomIntegerNumber = (min, max) => {
-  return min + Math.floor(Math.random() * (max - min));
-};
-
 const capitalizeFirstLetter = (string) => {
   return string[0].toUpperCase() + string.slice(1);
 };
@@ -47,4 +38,4 @@ const getOffersForCurrentType = (type, allOffers) => {
   return allOffers.find((offer) => (offer.type === type));
 };
 
-export {getRandomArrayItem, capitalizeFirstLetter, getTimeDuration, getGroupedByDayPoints, getOffersForCurrentType};
+export {capitalizeFirstLetter, getTimeDuration, getGroupedByDayPoints, getOffersForCurrentType};
