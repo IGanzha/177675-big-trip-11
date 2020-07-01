@@ -1,7 +1,7 @@
-import Destination from './models/destination.js';
-import Offer from './models/offer.js';
-import Point from './models/point.js';
-import {Method, ResponseCode} from './const.js';
+import Destination from '../models/destination.js';
+import Offer from '../models/offer.js';
+import Point from '../models/point.js';
+import {Method, ResponseCode} from '../const.js';
 
 
 const checkStatus = (response) => {
@@ -48,6 +48,16 @@ export default class API {
 
   deletePoint(id) {
     return this._load({url: `points/${id}`, method: Method.DELETE});
+  }
+
+  sync(points) {
+    return this._load({
+      url: `points/sync`,
+      method: Method.POST,
+      body: JSON.stringify(points),
+      headers: new Headers({"Content-Type": `application/json`})
+    })
+      .then((response) => response.json());
   }
 
   getDestinations() {
