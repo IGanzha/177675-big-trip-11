@@ -10,15 +10,15 @@
     "test": "npm run eslint"
   },
   "devDependencies": {
-    "css-loader": "3.5.3",
+    "css-loader": "6.7.3",
     "eslint": "6.1.0",
     "eslint-config-htmlacademy": "0.5.2",
     "he": "1.2.0",
     "moment-locales-webpack-plugin": "1.2.0",
     "nanoid": "3.1.9",
     "style-loader": "1.2.1",
-    "webpack": "4.42.1",
-    "webpack-cli": "3.3.11",
+    "webpack": "5.75.0",
+    "webpack-cli": "5.0.1",
     "webpack-dev-server": "3.11.0"
   },
   "engines": {
